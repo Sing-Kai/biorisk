@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+
+  <launch>
+
+      <node name="$(anon foo)" pkg="rospy_tutorials" type="talker.py" />
+    <node name="$(anon foo)" pkg="rospy_tutorials" type="talker.py" />
+
+  </launch>
