@@ -10,80 +10,67 @@ sound_pressure = 0.0
 def get_sound_data(data):
 
 	global sound_pressure
+
 	sound_pressure = data.data
 
-
-def populate_list(list_s, seconds):
-
-	#list_s = []
+def populate_list(list_s, seconds, sound_pressure):
 
 	list_length = len(list_s)
-	#sample_data = 0
-	#print list_length
-	
 
-	if list_length == 0:
+	new_list = []
 
-		list_s.append(seconds)
+	if list_length < 5:
 
-	elif list_length <= 5:
+		append_list(list_s, seconds, sound_pressure)
 
-		check_duplicate(list_s, seconds)
-		#sample_data = sample_rate(data_s)
-		#list_s.append(sample_data)
+	elif list_length == 5:
 
-		print list_s	
-		
+		new_list = list_s
+	print new_list
+	return new_list	
 
-def check_duplicate(list_s, data):
+def append_list(list_s, data, sound_pressure):
 
-	if data not in list_s and sample_rate(data):
+	#if sound_pressure not in list_s and sample_rate(data):
 
-		list_s.append(data)
-		
+	#	list_s.append(sound_pressure)	
+	if sample_rate(data):
+
+		list_s.append(sound_pressure)	
+
 
 def sample_rate(data):
 
-	#sample_data = 0
+	if data % 10 == 0:
 
-	if data % 2 == 0:
-		return True
-		
+		return True	
+
   	return False
 
 def soundSensor():
 
 	pub = rospy.Publisher('sound_score',Float64, queue_size = 1)
-	rospy.init_node('sound_simulator')
+	rospy.init_node('sound_sensor')
 	rospy.Subscriber('sound_pressure', Float64, get_sound_data)
 
 	rate = rospy.Rate(5.0)
 
 	list_s = []
+	final_list = []
 
 	while not rospy.is_shutdown():
 
-		#list_s = [1, 2, 3]
-
 		f_time = rospy.get_time()
 		seconds = round(f_time)
-
-		#final_list = populate_list(list_s, seconds)
-
 		
 		if seconds != 0.0:
-			populate_list(list_s, seconds)
+			
+			final_list = populate_list(list_s, seconds, sound_pressure)
 
+		#print sound_pressure
+		#print final_list
 
-		#print seconds #, final_list
-		print list_s
-		"""
-		if seconds % 2 == 0:
-			print seconds, "this is divisble by 2"
-		"""
-		#print round(time)
-
-		pub.publish(sound_pressure)
+		#pub.publish(sound_pressure)
 
 if __name__ == '__main__':
 

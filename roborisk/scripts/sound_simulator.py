@@ -41,16 +41,11 @@ def soundSimulator():
 
 		r_distance = round(relative_distance, 1)
 
-		#ratio = 1.0/(r_distance * 1.0)
-
-		#r = get_ratio(r_distance)
-
-		#ratio = 1/11.3
 		ratio = 1/r_distance
 
 		sound_pressure = decibel * ratio
 
-		print sound_pressure, decibel, r_distance, ratio, relative_distance
+		print sound_pressure
 
 		pub.publish(sound_pressure)
 
