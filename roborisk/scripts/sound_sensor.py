@@ -2,10 +2,13 @@
 import rospy
 import math
 import geometry_msgs.msg
+import numpy
 
 from std_msgs.msg import Float64
 
 sound_pressure = 0.0
+list_s = []
+
 
 def get_sound_data(data):
 
@@ -13,7 +16,7 @@ def get_sound_data(data):
 
 	sound_pressure = data.data
 
-def populate_list(list_s, seconds, sound_pressure):
+def populate_list(list_s, sound_pressure):
 
 	list_length = len(list_s)
 
@@ -21,31 +24,136 @@ def populate_list(list_s, seconds, sound_pressure):
 
 	if list_length < 5:
 
-		append_list(list_s, seconds, sound_pressure)
+		append_list(list_s, sound_pressure)
 
 	elif list_length == 5:
 
 		new_list = list_s
-	print new_list
-	return new_list	
+	#print new_list
+	#return new_list	
 
-def append_list(list_s, data, sound_pressure):
+def append_list(list_s, sound_pressure):
 
-	#if sound_pressure not in list_s and sample_rate(data):
-
-	#	list_s.append(sound_pressure)	
-	if sample_rate(data):
-
-		list_s.append(sound_pressure)	
+	list_s.append(sound_pressure)	
 
 
-def sample_rate(data):
+def check_seconds(sec, old_sec, sound_pressure):
 
-	if data % 10 == 0:
+	if sec > old_sec:		
+		old_sec = sec
+		populate_list(list_s, sound_pressure)
+		print list_s
+	return sec
 
-		return True	
+# NOT associated with whole of program yet, just need to populate the list
+def find_slope():
 
-  	return False
+	ylist = [2, 4, 5, 4, 5]
+
+	slope = 0.0
+	sum_square_x_final = 0
+	xy_sum = 0.0
+
+	xlist = []
+	dx_list = []
+	dy_list = []
+	sum_square_x = []
+	dx_dy = []
+
+	#mean_y = numpy.mean(ylist)
+	xlist = create_x_list(ylist)
+
+	mean_y = find_mean(ylist)
+
+	mean_x = find_mean(xlist)
+
+	dx_list = value_minus_mean(xlist, mean_x)
+	dy_list = value_minus_mean(ylist, mean_y)
+
+	#print dx_list, dy_list
+
+	dx_dy = dx_times_dy(dx_list, dy_list)
+
+	sum_square_x = dx_list
+
+	sum_square_x_final = sum_square(sum_square_x)
+
+	xy_sum = sum(dx_dy)
+
+	slope = float(xy_sum)/sum_square_x_final
+
+	print slope
+
+
+def dx_times_dy(dx_list, dy_list):
+
+	i = 0
+	total = 0
+	temp_list = []
+
+	while i < len(dy_list):
+		new_element = 0
+		new_element = dx_list[i] * dy_list[i]
+		print dx_list[i], dy_list[i]
+		new_element = abs(new_element)
+		temp_list.append(new_element)
+		i += 1
+
+	#print temp_list
+
+	return temp_list	
+
+def find_mean(temp_list):
+
+	total = 0
+	mean = 0
+
+	for i in temp_list:
+		total += i
+
+	mean = total/len(temp_list)
+
+	return mean	
+
+def value_minus_mean(temp_list, mean):
+
+	d_list = []
+
+	d_list = temp_list
+
+	d_list[:] = [x - mean for x in d_list]
+
+	#print "this is d_list", d_list
+
+	return d_list
+
+def create_x_list(alist):
+
+	x_list = []
+	i = 0
+	j = 0
+
+	while j < len(alist):
+		i += 1
+		x_list.append(i)
+		j += 1 	
+
+	#print x_list
+
+	return x_list	
+
+def sum_square(sum_square_x):
+
+	total = 0.0
+	temp_list = sum_square_x
+
+	temp_list[:] = [x ** 2 for x in temp_list]
+
+	total = sum(temp_list)
+
+	#print total
+
+	return total
 
 def soundSensor():
 
@@ -55,22 +163,36 @@ def soundSensor():
 
 	rate = rospy.Rate(5.0)
 
-	list_s = []
+	#list_s = []
 	final_list = []
+	old_seconds = 0
+
+	find_slope()
 
 	while not rospy.is_shutdown():
 
 		f_time = rospy.get_time()
 		seconds = round(f_time)
-		
-		if seconds != 0.0:
-			
-			final_list = populate_list(list_s, seconds, sound_pressure)
+		#old_seconds = 0
+		#old_seconds = check_seconds(seconds, old_seconds, sound_pressure)
 
+		#print seconds, old_seconds
+		#print sound_pressure
+		#if seconds % 2 == 0 and seconds != 0.0:
+			#print seconds, sound_pressure
+		#	final_list = populate_list(list_s, sound_pressure)
+			#print final_list
+
+		#if seconds % 10 == 0 and seconds != 0.0:
+			#print "empty list"
+		#	final_list = []	
 		#print sound_pressure
 		#print final_list
 
 		#pub.publish(sound_pressure)
+
+
+
 
 if __name__ == '__main__':
 
