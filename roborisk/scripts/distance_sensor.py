@@ -5,45 +5,42 @@ import geometry_msgs.msg
 
 from std_msgs.msg import Float64
 
-sound_pressure = 0.0
-list_s = []
+relative_distance = 0.0
+list_d = []
 
 
-def get_sound_data(data):
+def get_distance_data(data):
 
-	global sound_pressure
+	global relative_distance
 
-	sound_pressure = data.data
+	relative_distance = data.data
 
-def populate_list(list_s, sound_pressure):
+def populate_list(list_d, relative_distance):
 
-	list_length = len(list_s)
+	list_length = len(list_d)
 
 	new_list = []
 
 	if list_length < 5:
 
-		append_list(list_s, sound_pressure)
+		append_list(list_d, relative_distance)
 
 
-def append_list(list_s, sound_pressure):
+def append_list(list_d, relative_distance):
 
-	list_s.append(sound_pressure)	
+	list_d.append(relative_distance)	
 
-def check_seconds(sec, old_sec, sound_pressure):
+def check_seconds(sec, old_sec, relative_distance):
 
 	if sec > old_sec:		
 		old_sec = sec
-		populate_list(list_s, sound_pressure)		
+		populate_list(list_d, relative_distance)		
 
 	return sec
 
-# NOT associated with whole of program yet, just need to populate the list
 def find_slope(list_temp):
 	
-	ylist = list(list_s)
-	#ylist = [2, 4, 5, 4, 5]
-	#print ylist
+	ylist = list(list_d)
 
 	slope = 0.0
 	sum_square_x_final = 0
@@ -126,8 +123,6 @@ def create_x_list(alist):
 		x_list.append(i)
 		j += 1 	
 
-	#print x_list
-
 	return x_list	
 
 def sum_square(sum_square_x):
@@ -139,57 +134,42 @@ def sum_square(sum_square_x):
 
 	total = sum(temp_list)
 
-	#print total
-
 	return total
 
-def soundSensor():
+def distanceSensor():
 
-	pub = rospy.Publisher('sound_risk',Float64, queue_size = 1)
-	rospy.init_node('sound_sensor')
-	#rospy.Subscriber('sound_pressure', Float64, get_sound_data)
+	pub = rospy.Publisher('distance_risk',Float64, queue_size = 1)
+	rospy.init_node('distance_sensor')
 
 	rate = rospy.Rate(5.0)
 
-	#list_s = []
+
 	final_list = []
 	old_seconds = 0
-
-	#find_slope()
 
 	while not rospy.is_shutdown():
 
 		f_time = rospy.get_time()
 		seconds = round(f_time)
-		#old_seconds = 0
-		old_seconds = check_seconds(seconds, old_seconds, sound_pressure)
-
-
-		#find_slope(list_s)
+		old_seconds = check_seconds(seconds, old_seconds, relative_distance)
 		
-		if len(list_s) == 5:
-			sound_risk = find_slope(list_s)
-			#print "twubba lubba"
-			print list_s, sound_risk
+		if len(list_d) == 5:
+			distance_risk = find_slope(list_d)
+			print list_d, distance_risk
 
-			pub.publish(sound_risk)
+			pub.publish(distance_risk)
 			rospy.sleep(1.0)
-		#rospy.sleep(2.0)
 
-			del list_s[:]
-			print "list is empty", list_s
+			del list_d[:]
+			print "list is empty", list_d
 		
-
-		#pub.publish(sound_pressure)
-
-
-
+		#pub.publish(relative_distance)
 
 if __name__ == '__main__':
 
-	rospy.Subscriber('sound_pressure', Float64, get_sound_data)
+	rospy.Subscriber('relative_distance', Float64, get_distance_data)
 
 	try:
-		soundSensor()
+		distanceSensor()
 	except rospy.ROSInterruptException:
 		pass
