@@ -26,29 +26,25 @@ def populate_list(list_s, sound_pressure):
 
 		append_list(list_s, sound_pressure)
 
-	elif list_length == 5:
-
-		new_list = list_s
-	#print new_list
-	#return new_list	
 
 def append_list(list_s, sound_pressure):
 
 	list_s.append(sound_pressure)	
 
-
 def check_seconds(sec, old_sec, sound_pressure):
 
 	if sec > old_sec:		
 		old_sec = sec
-		populate_list(list_s, sound_pressure)
-		print list_s
+		populate_list(list_s, sound_pressure)		
+
 	return sec
 
 # NOT associated with whole of program yet, just need to populate the list
-def find_slope():
-
-	ylist = [2, 4, 5, 4, 5]
+def find_slope(list_temp):
+	
+	ylist = list(list_s)
+	#ylist = [2, 4, 5, 4, 5]
+	#print ylist
 
 	slope = 0.0
 	sum_square_x_final = 0
@@ -60,17 +56,13 @@ def find_slope():
 	sum_square_x = []
 	dx_dy = []
 
-	#mean_y = numpy.mean(ylist)
 	xlist = create_x_list(ylist)
 
 	mean_y = find_mean(ylist)
-
 	mean_x = find_mean(xlist)
 
 	dx_list = value_minus_mean(xlist, mean_x)
 	dy_list = value_minus_mean(ylist, mean_y)
-
-	#print dx_list, dy_list
 
 	dx_dy = dx_times_dy(dx_list, dy_list)
 
@@ -82,7 +74,9 @@ def find_slope():
 
 	slope = float(xy_sum)/sum_square_x_final
 
-	print slope
+	print ylist, xlist, slope
+
+	return slope
 
 
 def dx_times_dy(dx_list, dy_list):
@@ -94,12 +88,9 @@ def dx_times_dy(dx_list, dy_list):
 	while i < len(dy_list):
 		new_element = 0
 		new_element = dx_list[i] * dy_list[i]
-		print dx_list[i], dy_list[i]
-		new_element = abs(new_element)
+		new_element = new_element
 		temp_list.append(new_element)
 		i += 1
-
-	#print temp_list
 
 	return temp_list	
 
@@ -122,8 +113,6 @@ def value_minus_mean(temp_list, mean):
 	d_list = temp_list
 
 	d_list[:] = [x - mean for x in d_list]
-
-	#print "this is d_list", d_list
 
 	return d_list
 
@@ -157,9 +146,9 @@ def sum_square(sum_square_x):
 
 def soundSensor():
 
-	pub = rospy.Publisher('sound_score',Float64, queue_size = 1)
+	pub = rospy.Publisher('sound_risk',Float64, queue_size = 1)
 	rospy.init_node('sound_sensor')
-	rospy.Subscriber('sound_pressure', Float64, get_sound_data)
+	#rospy.Subscriber('sound_pressure', Float64, get_sound_data)
 
 	rate = rospy.Rate(5.0)
 
@@ -167,27 +156,30 @@ def soundSensor():
 	final_list = []
 	old_seconds = 0
 
-	find_slope()
+	#find_slope()
 
 	while not rospy.is_shutdown():
 
 		f_time = rospy.get_time()
 		seconds = round(f_time)
 		#old_seconds = 0
-		#old_seconds = check_seconds(seconds, old_seconds, sound_pressure)
+		old_seconds = check_seconds(seconds, old_seconds, sound_pressure)
 
-		#print seconds, old_seconds
-		#print sound_pressure
-		#if seconds % 2 == 0 and seconds != 0.0:
-			#print seconds, sound_pressure
-		#	final_list = populate_list(list_s, sound_pressure)
-			#print final_list
 
-		#if seconds % 10 == 0 and seconds != 0.0:
-			#print "empty list"
-		#	final_list = []	
-		#print sound_pressure
-		#print final_list
+		#find_slope(list_s)
+		
+		if len(list_s) == 5:
+			sound_risk = find_slope(list_s)
+			#print "twubba lubba"
+			print list_s, sound_risk
+
+			pub.publish(sound_risk)
+			rospy.sleep(1.0)
+		#rospy.sleep(2.0)
+
+			del list_s[:]
+			print "list is empty", list_s
+		
 
 		#pub.publish(sound_pressure)
 
@@ -195,6 +187,8 @@ def soundSensor():
 
 
 if __name__ == '__main__':
+
+	rospy.Subscriber('sound_pressure', Float64, get_sound_data)
 
 	try:
 		soundSensor()
