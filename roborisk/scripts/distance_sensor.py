@@ -6,6 +6,7 @@ import geometry_msgs.msg
 from std_msgs.msg import Float64
 
 relative_distance = 0.0
+inverse_distnace_score = 0.0
 list_d = []
 
 
@@ -15,7 +16,7 @@ def get_distance_data(data):
 
 	relative_distance = data.data
 
-def populate_list(list_d, relative_distance):
+def populate_list(list_d, inverse_distnace_score):
 
 	list_length = len(list_d)
 
@@ -23,18 +24,18 @@ def populate_list(list_d, relative_distance):
 
 	if list_length < 5:
 
-		append_list(list_d, relative_distance)
+		append_list(list_d, inverse_distnace_score)
 
 
-def append_list(list_d, relative_distance):
+def append_list(list_d, inverse_distnace_score):
 
-	list_d.append(relative_distance)	
+	list_d.append(inverse_distnace_score)	
 
-def check_seconds(sec, old_sec, relative_distance):
+def check_seconds(sec, old_sec, inverse_distnace_score):
 
 	if sec > old_sec:		
 		old_sec = sec
-		populate_list(list_d, relative_distance)		
+		populate_list(list_d, inverse_distnace_score)		
 
 	return sec
 
@@ -151,19 +152,24 @@ def distanceSensor():
 
 		f_time = rospy.get_time()
 		seconds = round(f_time)
-		old_seconds = check_seconds(seconds, old_seconds, relative_distance)
+
+		inverse_distnace_score = (1.0/relative_distance) * 100
+
+		#print inverse_distnace_score
+
+		old_seconds = check_seconds(seconds, old_seconds, inverse_distnace_score)
 		
 		if len(list_d) == 5:
 			distance_risk = find_slope(list_d)
-			print list_d, distance_risk
+			#print list_d, distance_risk
 
 			pub.publish(distance_risk)
 			rospy.sleep(1.0)
 
 			del list_d[:]
-			print "list is empty", list_d
+			#print "list is empty", list_d
 		
-		#pub.publish(relative_distance)
+		#pub.publish(distance_risk)
 
 if __name__ == '__main__':
 
