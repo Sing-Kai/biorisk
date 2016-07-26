@@ -35,38 +35,17 @@ def gtracker():
       rospy.wait_for_service("/gazebo/get_model_state")
       robotState = getstate(model_name="jackal")
 
-      print "\nBelow is the Pose"        
-      print robotState.pose.position
+      #print "\nBelow is the Pose"        
+      #print robotState.pose.position
 
-
-      #print "\nBelow is the Pose"     
-      #print robotState.pose.orientation
-
-
-      #print "\nBelow is the angular"        
-      #print robotState.twist.angular
       position_z = robotState.pose.position.z
       position_x = robotState.pose.position.x
       position_y = robotState.pose.position.y
-      #rospy.loginfo(position_z)
 
       #print position_z
       location_z.publish(position_z)
       location_y.publish(position_y)      
       location_x.publish(position_x)
-
-
-
-        #print "return x postion:", robotState.pose.position.x
-        #print "return y postion:", robotState.pose.position.y
-        #print "return z postion:", robotState.pose.position.z      
-        #print "return x linear:", robotState.twist.linear.x
-        #print "return y linear:", robotState.twist.linear.y
-        #print "return z linear:", robotState.twist.linear.z
-
-        #rospy.loginfo(hello_str)
-        #hello_str = "hello world %s" % rospy.get_time()        
-        #pub.publish(hello_str)
 
       rate.sleep()
 

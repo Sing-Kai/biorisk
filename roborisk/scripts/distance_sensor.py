@@ -169,7 +169,6 @@ def distanceSensor():
 			del list_d[:]
 			#print "list is empty", list_d
 		
-		#pub.publish(distance_risk)
 
 if __name__ == '__main__':
 

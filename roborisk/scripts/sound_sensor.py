@@ -183,8 +183,6 @@ def soundSensor():
 		#pub.publish(sound_pressure)
 
 
-
-
 if __name__ == '__main__':
 
 	rospy.Subscriber('sound_pressure', Float64, get_sound_data)

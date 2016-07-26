@@ -30,21 +30,10 @@ def gtracker():
    while not rospy.is_shutdown():
 
       getstate = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
-      #rospy.wait_for_service("/gazebo/get_model_state")
       robotState = getstate(model_name="quadrotor")
 
       #print "\nBelow is the Drone Pose"      
       #print robotState.pose.position
-
-      #print "\nBelow is the Drone Twist - linear"      
-      #print robotState.twist.linear
-
-      #print "\nBelow is the Drone Twist - angular"      
-      #print robotState.twist.angular
-
-      #print "\nBelow is the Drone Orientation"      
-      print robotState.pose.orientation.z
-
 
       x = robotState.pose.orientation.x
       y = robotState.pose.orientation.y
@@ -59,38 +48,15 @@ def gtracker():
       if degree < 0:
          degree += 360
 
-      #print degree, z, yaw
-
-
-      #z = obotState.pose.orientation.z
-      #sinz = sin(z)
-
-      #print "\nBelow is the Drone Vector"
-      #print robotState.Vector3
-
 
       position_z = robotState.pose.position.z
       position_x = robotState.pose.position.x
       position_y = robotState.pose.position.y
-      #rospy.loginfo(position_z)
 
-      #print position_z
       location_z.publish(position_z)
       location_y.publish(position_y)      
       location_x.publish(position_x)
       orientation_z.publish(oz)
-
-
-      #print "return x postion:", robotState.pose.position.x
-      #print "return y postion:", robotState.pose.position.y
-      #print "return z postion:", robotState.pose.position.z     
-      #print "return x linear:", robotState.twist.linear.x
-      #print "return y linear:", robotState.twist.linear.y
-      #print "return z linear:", robotState.twist.linear.z
-
-      #rospy.loginfo(hello_str)
-      #hello_str = "hello world %s" % rospy.get_time()      
-      #pub.publish(hello_str)
 
       rate.sleep()
 
