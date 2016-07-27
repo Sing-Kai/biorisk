@@ -7,6 +7,7 @@ import geometry_msgs.msg
 
 from std_msgs.msg import Float64
 from random import randint
+from reset_position import reset_robot
 #from geometry_msgs import PointStamped
 
 """
@@ -21,22 +22,7 @@ drone_orientation = 0.0
 robot_x = 0.0
 robot_y = 0.0
 robot_z = 0.0
-"""
-def get_drone_z(data):
 
-	global drone_z
-	drone_z = data.data
-
-def get_drone_x(data):
-
-	global drone_x
-	drone_x = data.data
-
-def get_drone_y(data):
-
-	global drone_y
-	drone_y = data.data	
-"""
 def get_robot_x(data):
 
 	global robot_x
@@ -51,13 +37,6 @@ def get_robot_z(data):
 	
 	global robot_z	
 	robot_z = data.data
-
-"""
-def get_drone_orientation(data):
-	
-	global drone_orientation
-	drone_orientation = data.data
-"""
 
 speed = .5
 turn = 1
@@ -98,6 +77,17 @@ def robotNavigation():
 	#print time
 
 	rate = rospy.Rate(1.0)
+
+	#cmd = geometry_msgs.msg.Twist()
+
+	#cmd.linear.x = 1
+	#cmd.angular.z = 0.5*turn
+
+	#leftturn(cmd)
+
+
+
+	
 	while not rospy.is_shutdown():
 
 		cmd = geometry_msgs.msg.Twist()
@@ -111,7 +101,7 @@ def robotNavigation():
 		#cmd.linear.x = 1
 		#cmd.angular.z = 0.5*turn
 
-		#leftturn(cmd)
+		leftturn(cmd)
 
 		#rightturn(cmd)
 
@@ -122,8 +112,14 @@ def robotNavigation():
 		time = rospy.get_time()
 		print time
 
+		"""
+		if time % 3 == 0:
+			leftturn(cmd)
+			rospy.sleep(3)
+		else:
+			rightturn(cmd)	
 		#print number
-
+		"""
 		#if number == 10:
 		#	leftturn(cmd)
 		#elif number == 20:
@@ -131,6 +127,7 @@ def robotNavigation():
 		#else:
 		#	forward(cmd)	
 
+	
 		pub.publish(cmd)
 
 if __name__ == '__main__':
