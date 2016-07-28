@@ -15,9 +15,7 @@ def reset_robot():
 	setmodel(ModelState('jackal',Pose(Point(3.0,3.0,0.0),Quaternion(0.0,0.0,0.0,1.0)),Twist(Vector3(0.0,0.0,0.0),Vector3(0.0,0.0,0.0)),'world'))
 	setmodel(ModelState('quadrotor',Pose(Point(-3.0,-3.0,0.0),Quaternion(0.0,0.0,0.0,1.0)),Twist(Vector3(0.0,0.0,0.0),Vector3(0.0,0.0,0.0)),'world'))
 
-
 if __name__ == '__main__':
-
 	
 	try:
 		reset_robot()

@@ -87,8 +87,8 @@ def pursuit():
 		relative_x = robot_x - drone_x
 		relative_y = robot_y - drone_y
 
-		robotAngle = math.atan2(relative_y, relative_x)
-		quaternion = tf.transformations.quaternion_from_euler(0, 0, robotAngle)
+		relative_angle = math.atan2(relative_y, relative_x)
+		quaternion = tf.transformations.quaternion_from_euler(0, 0, relative_angle)
 		quaternion_z = quaternion[2]
 
 		angular = math.atan2(relative_y, relative_x)

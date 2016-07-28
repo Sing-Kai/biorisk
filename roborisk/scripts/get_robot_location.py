@@ -25,7 +25,7 @@ def gtracker():
    location_x = rospy.Publisher('robot_position_x', Float64, queue_size=10)
    location_z = rospy.Publisher('robot_position_z', Float64, queue_size=10)
    location_y = rospy.Publisher('robot_position_y', Float64, queue_size=10)
-
+   orientation_z = rospy.Publisher('robot_orientation', Float64, queue_size=10)
 
    rate = rospy.Rate(10) # 10hz
 
@@ -36,16 +36,20 @@ def gtracker():
       robotState = getstate(model_name="jackal")
 
       #print "\nBelow is the Pose"        
-      #print robotState.pose.position
+
 
       position_z = robotState.pose.position.z
       position_x = robotState.pose.position.x
       position_y = robotState.pose.position.y
+      oz = robotState.pose.orientation.z
+
+      print robotState.pose.orientation.z
 
       #print position_z
       location_z.publish(position_z)
       location_y.publish(position_y)      
       location_x.publish(position_x)
+      orientation_z.publish(oz)
 
       rate.sleep()
 
