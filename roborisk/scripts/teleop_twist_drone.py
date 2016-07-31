@@ -82,7 +82,7 @@ def pursuit():
 	rate = rospy.Rate(5.0)
 	while not rospy.is_shutdown():
 
-		angularSpeed = 5.0
+		angularSpeed = 3.0
 
 		relative_x = robot_x - drone_x
 		relative_y = robot_y - drone_y
@@ -96,39 +96,71 @@ def pursuit():
 		linear = math.sqrt(relative_x ** 2 + relative_y ** 2) # Distance from Robot
 
 
+		drone_angle = math.atan2(drone_y, drone_x) * (180.0/math.pi)
+
 		cmd = geometry_msgs.msg.Twist()
 		cmd.linear.z = z*0.5				
+
+		q = (0.0, 0.0, drone_orientation, 0.0)
+		euler = tf.transformations.euler_from_quaternion(q)
+		roll = euler[0]
+		pitch = euler[1]
+		yaw = euler[2]
+
+		r_angle = math.radians(yaw)
+
 
 		if round(drone_z) == 2:
 			z = 0
 
-		robot_qz = round(quaternion_z, 1)
-		drone_qz = round(drone_orientation, 1)
+		robot_qz = round(quaternion_z, 2)
+		drone_qz = round(drone_orientation, 2)
 
-		if robot_qz == drone_qz:
+		relative_angle = relative_angle * (180.0/math.pi)
 
+		ninty = robot_qz - 0.01
+		hundredten = robot_qz + 0.01
+
+
+		d_r = robot_qz - drone_qz
+
+
+		if -0.1 <= d_r <= 0.1:
+
+		#if robot_qz == drone_qz:
 			cmd.angular.z = 0.0 
-			cmd.linear.x = 1
-			print "it's facing the robot"
+			#cmd.linear.x = 0.8
+			#print "it's facing the robot"
 
 		elif robot_qz < drone_qz:
 
-			cmd.angular.z = angularSpeed * (-0.8)
-			cmd.linear.x = 0.8
+			#cmd.angular.z -= angularSpeed
+			cmd.angular.z = angularSpeed * (-0.5)
+			#cmd.linear.x = 0.8
 
 		elif robot_qz > drone_qz:
 
-			cmd.angular.z = angularSpeed * (0.8)
-			cmd.linear.x = 0.8		
+			#cmd.angular.z += angularSpeed
+			cmd.angular.z = angularSpeed * (0.5)
+			#cmd.linear.x = 0.8		
 
 		elif -(robot_qz) > -(drone_qz):
 
-			cmd.angular.z = angularSpeed * (-0.8)
-			cmd.linear.x = 0.8
+			#cmd.angular.z -= angularSpeed
+			cmd.angular.z = angularSpeed * (-0.5)
+			#cmd.linear.x = 0.8
 		
 		else:
-			cmd.angular.z = angularSpeed * (-0.8)
-			cmd.linear.x = 0.8
+			#cmd.angular.z -= angularSpeed
+			cmd.angular.z = angularSpeed * (-0.5)
+
+			#cmd.linear.x = 0.8
+
+
+
+		#print angular * (180.0/math.pi) , r_angle
+
+		print robot_qz, drone_qz, d_r
 
 		pub.publish(cmd)
 

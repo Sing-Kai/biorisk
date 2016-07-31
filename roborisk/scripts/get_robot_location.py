@@ -11,6 +11,7 @@ import tf
 from gazebo_msgs.srv import GetModelState
 from gazebo_msgs.msg import ModelState
 from geometry_msgs.msg import Pose
+from geometry_msgs.msg import PoseStamped
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Point
 from geometry_msgs.msg import Quaternion
@@ -27,7 +28,7 @@ def gtracker():
    location_y = rospy.Publisher('robot_position_y', Float64, queue_size=10)
    orientation_z = rospy.Publisher('robot_orientation', Float64, queue_size=10)
 
-   rate = rospy.Rate(10) # 10hz
+   rate = rospy.Rate(5) # 10hz
 
    while not rospy.is_shutdown():
 

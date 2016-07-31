@@ -77,6 +77,30 @@ def forward(cmd):
 	cmd.linear.x = 1
 
 
+def move_to_goal(goalx, goaly, robotx, roboty, cmd):
+
+	if ((goalx * 0.85) <= robotx <= (goalx * 1.015)) and ((goaly * 0.85) <= roboty <= (goaly * 1.015)):
+
+		cmd.linear.x = 0	
+
+		cmd.angular.z = 0.0 
+	else:	
+
+		cmd.linear.x = 1	
+
+def move_to_goal2(goalx, goaly, robotx, roboty, cmd):
+
+	if goalx == robotx and goaly <= roboty:
+
+		cmd.linear.x = 0	
+
+		cmd.angular.z = 0.0 
+	else:	
+
+		cmd.linear.x = 1	
+
+
+
 def robotNavigation():
 
 	pub = rospy.Publisher('cmd_vel', geometry_msgs.msg.Twist, queue_size = 1)
@@ -108,8 +132,8 @@ def robotNavigation():
 	distance = 5.0
 	time = rospy.get_time()
 
-	goal_x = 5
-	goal_y = 5
+	goal_x = 1
+	goal_y = 1
 	
 	r_goal_x = goal_x - 0
 	r_goal_y = goal_y - 0
@@ -158,31 +182,33 @@ def robotNavigation():
 		angularSpeed = 1
 
 
-		if robot_oz == goal_oz:
+		if (goal_oz * 0.9) <= robot_oz <= (goal_oz * 1.01):
 
 			cmd.angular.z = 0.0 
+
+			move_to_goal2(goal_x, goal_y, robot_x, robot_y, cmd)
 			#cmd.linear.x = 1
 			print "it's facing the robot", robot_oz, goal_oz
 
 		elif robot_oz < goal_oz:
 
 			cmd.angular.z = (0.8)
-			#cmd.linear.x = 0.8
-
+			cmd.linear.x = 0.5
+			print "test1"
 		elif robot_oz > goal_oz:
 
 			cmd.angular.z = (-0.8)
-			#cmd.linear.x = 0.8		
-
+			cmd.linear.x = 0.5		
+			print "test2"
 		elif -(robot_oz) > -(goal_oz):
 
 			cmd.angular.z = (0.8)
-			#cmd.linear.x = 0.8
-		
+			cmd.linear.x = 0.5
+			print "test3"		
 		else:
 			cmd.angular.z = (0.8)
-			#cmd.linear.x = 0.8
-
+			cmd.linear.x = 0.5
+			print "test4"
 		pub.publish(cmd)
 		
 
