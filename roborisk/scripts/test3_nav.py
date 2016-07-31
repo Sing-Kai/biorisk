@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Created on Jan 10 11:16:00 2014
-
-@author: Sam Pfeiffer
 
 Snippet of code on how to send a navigation goal and how to get the current robot position in map
 
@@ -17,6 +14,7 @@ Type of message: geometry_msgs/PoseWithCovarianceStamped
 
 import rospy
 import actionlib
+import random
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from geometry_msgs.msg import PoseWithCovarianceStamped, Quaternion, Twist
 from tf.transformations import quaternion_from_euler, euler_from_quaternion
@@ -49,6 +47,48 @@ Prints the current received data on the topic."""
                                              data.pose.pose.orientation.w])
     rospy.loginfo("Current robot pose: x=" + str(x) + "y=" + str(y) + " yaw=" + str(degrees(yaw)) + "º")
     #print "Current robot pose: x=" + str(x) + "y=" + str(y) + " yaw=" + str(degrees(yaw)) + "º"
+    
+
+def random_number():
+
+    number = random.randint(-5, 5)
+
+    return number
+
+def send_goal(nav_gal):
+
+    nav_as.send_goal(nav_goal)
+    nav_as.wait_for_result()
+    nav_res = nav_as.get_result()
+
+def protean():
+
+    """
+    x = random_number()
+    y = random_number()
+
+    print x, y
+
+    nav_goal = create_nav_goal(x, y, 0.0)
+    send_goal(nav_goal)
+    nav_state = nav_as.get_state()
+
+    if nav_state == 3:
+        nav_goal = create_nav_goal(0.5, 0.0, 0.0)
+        nav_as.send_goal(nav_goal)
+        nav_state = nav_as.get_state()
+    """
+    for i in range(3):
+
+        x = random_number()
+        y = random_number()
+        print x, y
+        nav_goal = create_nav_goal(x, y, 0.0)
+        nav_as.send_goal(nav_goal)
+        nav_as.wait_for_result()
+        nav_res = nav_as.get_result()
+        nav_state = nav_as.get_state()
+        print "Nav state: ", str(nav_state), i
 
 if __name__=='__main__':
     rospy.init_node("navigation_snippet")
@@ -63,11 +103,8 @@ if __name__=='__main__':
     rospy.loginfo("Connected.")
 
     rospy.loginfo("Creating navigation goal...")
-    #nav_goal = create_nav_goal(5.0, 0.0, 0.0)#4.72333594438, -0.377168390489, 45) # 3.925197124481201, -3.026911973953247, 0.6259599924087524 livingroom
-    rospy.loginfo("Sending goal to x ...")
 
-    nav_goal = create_nav_goal(0.5, 0.0, 0.0)#4.72333594438, -0.377168390489, 45) # 3.925197124481201, -3.026911973953247, 0.6259599924087524 livingroom
-    rospy.loginfo("Sending goal to x=2.0 y=2.0 yaw=90...")
+    nav_goal = create_nav_goal(5.5, 0.0, 0.0)#4.72333594438, -0.377168390489, 45) # 3.925197124481201, -3.026911973953247, 0.6259599924087524 livingroom
     nav_as.send_goal(nav_goal)
 
     rospy.loginfo("Waiting for result...")
@@ -76,4 +113,14 @@ if __name__=='__main__':
     nav_state = nav_as.get_state()
     rospy.loginfo("Done!")
     print "Result: ", str(nav_res) # always empty, be careful
-    print "Nav state: ", str(nav_state) # use this, 3 is SUCCESS, 4 is ABORTED (couldnt get there), 5 REJECTED (the goal is not attainable)    
+    print "Nav state: ", str(nav_state) # use this, 3 is SUCCESS, 4 is ABORTED (couldnt get there), 5 REJECTED (the goal is not attainable)  
+
+    protean()
+
+    """
+    if nav_state == 3:
+        nav_goal = create_nav_goal(0.5, 0.0, 0.0)
+        nav_as.send_goal(nav_goal)
+        nav_state = nav_as.get_state()
+        print "2nd Goal Nav state: ", str(nav_state)
+    """
