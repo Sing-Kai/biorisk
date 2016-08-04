@@ -43,7 +43,7 @@ def get_robot_z(data):
 	global robot_z	
 	robot_z = data.data
 
-def robotNavigation():
+def findDistance():
 
 	pub = rospy.Publisher('relative_distance',Float64, queue_size = 1)
 	rospy.init_node('relative_distance_manager')
@@ -67,13 +67,13 @@ def robotNavigation():
 		dz = drone_z - robot_z
 
 		relative_distance = math.sqrt(dx ** 2 + dy ** 2 + dz ** 2)
-		print relative_distance
+		#print relative_distance
 
 		pub.publish(relative_distance)
 
 if __name__ == '__main__':
 
 	try:
-		robotNavigation()
+		findDistance()
 	except rospy.ROSInterruptException:
 		pass

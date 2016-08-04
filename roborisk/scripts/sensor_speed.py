@@ -5,45 +5,45 @@ import geometry_msgs.msg
 
 from std_msgs.msg import Float64
 
-sound_pressure = 0.0
-list_s = []
+relative_distance = 0.0
+speed = 0.0
+list_d = []
 
 
-def get_sound_data(data):
+def get_distance_data(data):
 
-	global sound_pressure
+	global relative_distance
 
-	sound_pressure = data.data
+	relative_distance = data.data
 
-def populate_list(list_s, sound_pressure):
+def populate_list(list_d, speed):
 
-	list_length = len(list_s)
+	list_length = len(list_d)
 
 	new_list = []
 
 	if list_length < 5:
 
-		append_list(list_s, sound_pressure)
+		append_list(list_d, speed)
 
 
-def append_list(list_s, sound_pressure):
+def append_list(list_d, speed):
 
-	list_s.append(sound_pressure)	
+	list_d.append(speed)	
 
-def check_seconds(sec, old_sec, sound_pressure):
+# checks for time difference and populates a list for analysis
+def check_seconds(sec, old_sec, speed):
 
 	if sec > old_sec:		
 		old_sec = sec
-		populate_list(list_s, sound_pressure)		
+		populate_list(list_d, speed)		
 
 	return sec
 
-# NOT associated with whole of program yet, just need to populate the list
+# analyse sample list data to check return slope
 def find_slope(list_temp):
 	
-	ylist = list(list_s)
-	#ylist = [2, 4, 5, 4, 5]
-	#print ylist
+	ylist = list(list_d)
 
 	slope = 0.0
 	sum_square_x_final = 0
@@ -56,27 +56,22 @@ def find_slope(list_temp):
 	dx_dy = []
 
 	xlist = create_x_list(ylist)
-
 	mean_y = find_mean(ylist)
 	mean_x = find_mean(xlist)
 
 	dx_list = value_minus_mean(xlist, mean_x)
 	dy_list = value_minus_mean(ylist, mean_y)
-
 	dx_dy = dx_times_dy(dx_list, dy_list)
 
 	sum_square_x = dx_list
-
 	sum_square_x_final = sum_square(sum_square_x)
-
 	xy_sum = sum(dx_dy)
 
 	slope = float(xy_sum)/sum_square_x_final
 
-	print ylist, xlist, slope
+	#print ylist, xlist, slope
 
 	return slope
-
 
 def dx_times_dy(dx_list, dy_list):
 
@@ -108,9 +103,7 @@ def find_mean(temp_list):
 def value_minus_mean(temp_list, mean):
 
 	d_list = []
-
 	d_list = temp_list
-
 	d_list[:] = [x - mean for x in d_list]
 
 	return d_list
@@ -126,8 +119,6 @@ def create_x_list(alist):
 		x_list.append(i)
 		j += 1 	
 
-	#print x_list
-
 	return x_list	
 
 def sum_square(sum_square_x):
@@ -139,55 +130,53 @@ def sum_square(sum_square_x):
 
 	total = sum(temp_list)
 
-	#print total
-
 	return total
 
-def soundSensor():
+def speedSensor():
 
-	pub = rospy.Publisher('sound_risk',Float64, queue_size = 1)
-	rospy.init_node('sound_sensor')
-	#rospy.Subscriber('sound_pressure', Float64, get_sound_data)
+	pub = rospy.Publisher('speed_risk',Float64, queue_size = 1)
+	rospy.init_node('speed_sensor')
 
 	rate = rospy.Rate(5.0)
 
-	#list_s = []
 	final_list = []
-	old_seconds = 0
-
-	#find_slope()
+	intial_seconds = 0
 
 	while not rospy.is_shutdown():
 
+		#estimate speed of by calculating speed difference in distance every two seconds 
+		first_distance = relative_distance
+		total_seconds = 2.0
+		rospy.sleep(total_seconds)
+		second_distance = relative_distance
+		distance_difference = round(first_distance - second_distance)
+		speed = distance_difference/total_seconds
+
+		print first_distance, second_distance, distance_difference, speed
+
 		f_time = rospy.get_time()
-		seconds = round(f_time)
-		#old_seconds = 0
-		old_seconds = check_seconds(seconds, old_seconds, sound_pressure)
+		current_seconds = round(f_time)
 
-
-		#find_slope(list_s)
+		# checks for time difference and populates a list for analysis
+		intial_seconds = check_seconds(current_seconds, intial_seconds, speed)
 		
-		if len(list_s) == 5:
-			sound_risk = find_slope(list_s)
-			#print "twubba lubba"
-			print list_s, sound_risk
+		# once 5 samples have been taken the analyse the slope of data to see if this is increase or decreasing
+		if len(list_d) == 5:
+			speed_risk = find_slope(list_d)
+			print list_d, speed_risk
 
-			pub.publish(sound_risk)
+			pub.publish(speed_risk)
 			rospy.sleep(1.0)
-		#rospy.sleep(2.0)
 
-			del list_s[:]
-			print "list is empty", list_s
-		
-
-		#pub.publish(sound_pressure)
+			# empty list 
+			del list_d[:]
 
 
 if __name__ == '__main__':
 
-	rospy.Subscriber('sound_pressure', Float64, get_sound_data)
+	rospy.Subscriber('relative_distance', Float64, get_distance_data)
 
 	try:
-		soundSensor()
+		speedSensor()
 	except rospy.ROSInterruptException:
 		pass

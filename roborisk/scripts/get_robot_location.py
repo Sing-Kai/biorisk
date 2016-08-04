@@ -44,7 +44,7 @@ def gtracker():
       position_y = robotState.pose.position.y
       oz = robotState.pose.orientation.z
 
-      print robotState.pose.orientation.z
+      #print robotState.pose.orientation.z
 
       #print position_z
       location_z.publish(position_z)

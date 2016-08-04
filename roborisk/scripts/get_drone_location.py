@@ -33,7 +33,7 @@ def gtracker():
       robotState = getstate(model_name="quadrotor")
 
       #print "\nBelow is the Drone Pose"      
-      #print robotState.pose.position
+      print robotState.pose.orientation.z, robotState.pose.orientation.w
 
       x = robotState.pose.orientation.x
       y = robotState.pose.orientation.y

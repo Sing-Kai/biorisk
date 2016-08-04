@@ -6,7 +6,7 @@ import geometry_msgs.msg
 from std_msgs.msg import Float64
 
 relative_distance = 0.0
-inverse_distnace_score = 0.0
+distnace_score = 0.0
 list_d = []
 
 
@@ -16,7 +16,7 @@ def get_distance_data(data):
 
 	relative_distance = data.data
 
-def populate_list(list_d, inverse_distnace_score):
+def populate_list(list_d, distnace_score):
 
 	list_length = len(list_d)
 
@@ -24,18 +24,18 @@ def populate_list(list_d, inverse_distnace_score):
 
 	if list_length < 5:
 
-		append_list(list_d, inverse_distnace_score)
+		append_list(list_d, distnace_score)
 
+def append_list(list_d, distnace_score):
 
-def append_list(list_d, inverse_distnace_score):
+	list_d.append(distnace_score)	
 
-	list_d.append(inverse_distnace_score)	
-
-def check_seconds(sec, old_sec, inverse_distnace_score):
+#
+def check_seconds(sec, old_sec, distnace_score):
 
 	if sec > old_sec:		
 		old_sec = sec
-		populate_list(list_d, inverse_distnace_score)		
+		populate_list(list_d, distnace_score)		
 
 	return sec
 
@@ -71,7 +71,7 @@ def find_slope(list_temp):
 
 	slope = float(xy_sum)/sum_square_x_final
 
-	print ylist, xlist, slope
+	#print ylist, xlist, slope
 
 	return slope
 
@@ -144,21 +144,23 @@ def distanceSensor():
 
 	rate = rospy.Rate(5.0)
 
-
 	final_list = []
-	old_seconds = 0
+	intial_seconds = 0
 
 	while not rospy.is_shutdown():
 
 		f_time = rospy.get_time()
 		seconds = round(f_time)
 
-		inverse_distnace_score = (1.0/relative_distance) * 100
+		# distance_score increases as drone gets closer to the robot
+		distnace_score = (1.0/relative_distance) * 100
 
-		#print inverse_distnace_score
+		#print distnace_score, seconds
 
-		old_seconds = check_seconds(seconds, old_seconds, inverse_distnace_score)
+		#every 1 second sample distance score
+		intial_seconds = check_seconds(seconds, intial_seconds, distnace_score)
 		
+		# once 5 samples have been taken the analyse the slope of data to see if this is increase or decreasing
 		if len(list_d) == 5:
 			distance_risk = find_slope(list_d)
 			#print list_d, distance_risk

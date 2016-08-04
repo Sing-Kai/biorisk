@@ -79,7 +79,7 @@ def pursuit():
 	origin_x = 0
 	origin_y = 0
 
-	rate = rospy.Rate(5.0)
+	rate = rospy.Rate(10.0)
 	while not rospy.is_shutdown():
 
 		angularSpeed = 3.0
@@ -87,9 +87,14 @@ def pursuit():
 		relative_x = robot_x - drone_x
 		relative_y = robot_y - drone_y
 
+		relative_x2 = drone_x - robot_x
+		relative_y2 = drone_y - robot_y
+
+
 		relative_angle = math.atan2(relative_y, relative_x)
 		quaternion = tf.transformations.quaternion_from_euler(0, 0, relative_angle)
 		quaternion_z = quaternion[2]
+	
 
 		angular = math.atan2(relative_y, relative_x)
 
@@ -101,6 +106,7 @@ def pursuit():
 		cmd = geometry_msgs.msg.Twist()
 		cmd.linear.z = z*0.5				
 
+		"""
 		q = (0.0, 0.0, drone_orientation, 0.0)
 		euler = tf.transformations.euler_from_quaternion(q)
 		roll = euler[0]
@@ -108,6 +114,8 @@ def pursuit():
 		yaw = euler[2]
 
 		r_angle = math.radians(yaw)
+		"""
+
 
 
 		if round(drone_z) == 2:
@@ -116,7 +124,7 @@ def pursuit():
 		robot_qz = round(quaternion_z, 2)
 		drone_qz = round(drone_orientation, 2)
 
-		relative_angle = relative_angle * (180.0/math.pi)
+		#relative_angle = relative_angle * (180.0/math.pi)
 
 		ninty = robot_qz - 0.01
 		hundredten = robot_qz + 0.01
@@ -124,12 +132,16 @@ def pursuit():
 
 		d_r = robot_qz - drone_qz
 
-
+		"""
+		if robot_qz < 0:
+			robot_qz = -robot_qz
+		"""
+		
 		if -0.1 <= d_r <= 0.1:
 
 		#if robot_qz == drone_qz:
 			cmd.angular.z = 0.0 
-			#cmd.linear.x = 0.8
+			#cmd.linear.x = 4.0
 			#print "it's facing the robot"
 
 		elif robot_qz < drone_qz:
@@ -155,14 +167,12 @@ def pursuit():
 			cmd.angular.z = angularSpeed * (-0.5)
 
 			#cmd.linear.x = 0.8
+		
 
 
+		print robot_qz, drone_qz, relative_angle, d_r
 
-		#print angular * (180.0/math.pi) , r_angle
-
-		print robot_qz, drone_qz, d_r
-
-		pub.publish(cmd)
+		#pub.publish(cmd)
 
 if __name__ == '__main__':
 

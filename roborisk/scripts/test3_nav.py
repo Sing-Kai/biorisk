@@ -16,9 +16,13 @@ import rospy
 import actionlib
 import random
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
+from actionlib_msgs.msg import GoalID
 from geometry_msgs.msg import PoseWithCovarianceStamped, Quaternion, Twist
 from tf.transformations import quaternion_from_euler, euler_from_quaternion
 from math import radians, degrees
+from std_msgs.msg import Float64
+
+risk_score = 0
 
 def create_nav_goal(x, y, yaw):
     """Create a MoveBaseGoal with x, y position and yaw rotation (in degrees).
@@ -47,7 +51,12 @@ Prints the current received data on the topic."""
                                              data.pose.pose.orientation.w])
     rospy.loginfo("Current robot pose: x=" + str(x) + "y=" + str(y) + " yaw=" + str(degrees(yaw)) + "º")
     #print "Current robot pose: x=" + str(x) + "y=" + str(y) + " yaw=" + str(degrees(yaw)) + "º"
-    
+
+def callback_risk(data):
+
+    global risk_score
+
+    risk_score = data.data
 
 def random_number():
 
@@ -61,66 +70,69 @@ def send_goal(nav_gal):
     nav_as.wait_for_result()
     nav_res = nav_as.get_result()
 
-def protean():
+# protean fleeing behaviour, currently changes random direction 3 times
+def protean(risk_score):
 
-    """
-    x = random_number()
-    y = random_number()
-
-    print x, y
-
-    nav_goal = create_nav_goal(x, y, 0.0)
-    send_goal(nav_goal)
-    nav_state = nav_as.get_state()
-
-    if nav_state == 3:
-        nav_goal = create_nav_goal(0.5, 0.0, 0.0)
-        nav_as.send_goal(nav_goal)
-        nav_state = nav_as.get_state()
-    """
-    for i in range(3):
+    for i in range(2):
 
         x = random_number()
         y = random_number()
-        print x, y
-        nav_goal = create_nav_goal(x, y, 0.0)
-        nav_as.send_goal(nav_goal)
-        nav_as.wait_for_result()
-        nav_res = nav_as.get_result()
-        nav_state = nav_as.get_state()
+        print x, y, risk_score
+        d_goal = create_nav_goal(x, y, 0.0)
+        defence.send_goal(d_goal)
+        defence.wait_for_result()
+        nav_res = defence.get_result()
+        nav_state = defence.get_state()
         print "Nav state: ", str(nav_state), i
+
+    return True    
+ 
+def risk_check():
+
+    print "navigate to main goal"
+    nav_goal = create_nav_goal(5.5, 0.0, 0.0)
+    nav_as.send_goal(nav_goal)
+
+    nav_state = 1
+    #print "nav_state", nav_state
+
+    while (nav_state != 3):
+        
+        #nav_as.wait_for_result()
+        #print "test nav wait", test
+        nav_state = nav_as.get_state()
+        print nav_state, risk_score
+
+        start_defence = False
+
+        # initialize protean behaviour
+        if risk_score == 4:
+            print "abandon mission, implementing fleeing"
+            #nav_as.cancel_all_goals()    
+            start_defence = protean(risk_score)              
+        
+        # once defence is complete restart goal
+        if start_defence == True:
+            print "returning to mission"
+            nav_goal = create_nav_goal(5.5, 0.0, 0.0)
+            nav_as.send_goal(nav_goal)
+        #rospy.loginfo("Waiting for result...")
+        
+    print "Mission accomplished"
 
 if __name__=='__main__':
     rospy.init_node("navigation_snippet")
 
     # Read the current pose topic
-    rospy.Subscriber("/amcl_pose", PoseWithCovarianceStamped, callback_pose)
-
+    #rospy.Subscriber("/amcl_pose", PoseWithCovarianceStamped, callback_pose)
+    rospy.Subscriber('risk_score', Float64, callback_risk)
     # Connect to the navigation action server
     nav_as = actionlib.SimpleActionClient('/move_base', MoveBaseAction)
+    defence = actionlib.SimpleActionClient('/move_base', MoveBaseAction)
     rospy.loginfo("Connecting to /move_base AS...")
     nav_as.wait_for_server()
     rospy.loginfo("Connected.")
 
     rospy.loginfo("Creating navigation goal...")
 
-    nav_goal = create_nav_goal(5.5, 0.0, 0.0)#4.72333594438, -0.377168390489, 45) # 3.925197124481201, -3.026911973953247, 0.6259599924087524 livingroom
-    nav_as.send_goal(nav_goal)
-
-    rospy.loginfo("Waiting for result...")
-    nav_as.wait_for_result()
-    nav_res = nav_as.get_result()
-    nav_state = nav_as.get_state()
-    rospy.loginfo("Done!")
-    print "Result: ", str(nav_res) # always empty, be careful
-    print "Nav state: ", str(nav_state) # use this, 3 is SUCCESS, 4 is ABORTED (couldnt get there), 5 REJECTED (the goal is not attainable)  
-
-    protean()
-
-    """
-    if nav_state == 3:
-        nav_goal = create_nav_goal(0.5, 0.0, 0.0)
-        nav_as.send_goal(nav_goal)
-        nav_state = nav_as.get_state()
-        print "2nd Goal Nav state: ", str(nav_state)
-    """
+    risk_check()
