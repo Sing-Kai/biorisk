@@ -67,7 +67,7 @@ def findDistance():
 		dz = drone_z - robot_z
 
 		relative_distance = math.sqrt(dx ** 2 + dy ** 2 + dz ** 2)
-		#print relative_distance
+		print relative_distance
 
 		pub.publish(relative_distance)
 

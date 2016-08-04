@@ -52,12 +52,14 @@ Prints the current received data on the topic."""
     rospy.loginfo("Current robot pose: x=" + str(x) + "y=" + str(y) + " yaw=" + str(degrees(yaw)) + "º")
     #print "Current robot pose: x=" + str(x) + "y=" + str(y) + " yaw=" + str(degrees(yaw)) + "º"
 
+# get risk scoring from risk controller
 def callback_risk(data):
 
     global risk_score
 
     risk_score = data.data
 
+# generate random number
 def random_number():
 
     number = random.randint(-5, 5)
@@ -87,7 +89,7 @@ def protean(risk_score):
 
     return True    
  
-def risk_check():
+def navigationMission():
 
     print "navigate to main goal"
     nav_goal = create_nav_goal(5.5, 0.0, 0.0)
@@ -121,7 +123,7 @@ def risk_check():
     print "Mission accomplished"
 
 if __name__=='__main__':
-    rospy.init_node("navigation_snippet")
+    rospy.init_node("navigation_mission")
 
     # Read the current pose topic
     #rospy.Subscriber("/amcl_pose", PoseWithCovarianceStamped, callback_pose)
@@ -135,4 +137,4 @@ if __name__=='__main__':
 
     rospy.loginfo("Creating navigation goal...")
 
-    risk_check()
+    navigationMission()
