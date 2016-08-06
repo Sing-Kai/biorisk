@@ -45,21 +45,10 @@ def get_robot_z(data):
 
 def findDistance():
 
-	pub = rospy.Publisher('relative_distance',Float64, queue_size = 1)
 	rospy.init_node('relative_distance_manager')
-
-	# subcribe to drone position 
-	rospy.Subscriber('drone_position_x', Float64, get_drone_x)
-	rospy.Subscriber('drone_position_y', Float64, get_drone_y)
-	rospy.Subscriber('drone_position_z', Float64, get_drone_z)	
-	#rospy.Subscriber('drone_orientation', Float64, get_drone_orientation)	
-
-	# subcribe to robot position 
-	rospy.Subscriber('robot_position_x', Float64, get_robot_x)		
-	rospy.Subscriber('robot_position_y', Float64, get_robot_y)
-	rospy.Subscriber('robot_position_z', Float64, get_robot_z)
-
+	distance = rospy.Publisher('relative_distance',Float64, queue_size = 1)
 	rate = rospy.Rate(5.0)
+
 	while not rospy.is_shutdown():
 
 		dx = drone_x - robot_x
@@ -69,10 +58,18 @@ def findDistance():
 		relative_distance = math.sqrt(dx ** 2 + dy ** 2 + dz ** 2)
 		print relative_distance
 
-		pub.publish(relative_distance)
+		distance.publish(relative_distance)
 
 if __name__ == '__main__':
+	# subcribe to drone position 
+	rospy.Subscriber('drone_position_x', Float64, get_drone_x)
+	rospy.Subscriber('drone_position_y', Float64, get_drone_y)
+	rospy.Subscriber('drone_position_z', Float64, get_drone_z)	
 
+	# subcribe to robot position 
+	rospy.Subscriber('robot_position_x', Float64, get_robot_x)		
+	rospy.Subscriber('robot_position_y', Float64, get_robot_y)
+	rospy.Subscriber('robot_position_z', Float64, get_robot_z)
 	try:
 		findDistance()
 	except rospy.ROSInterruptException:

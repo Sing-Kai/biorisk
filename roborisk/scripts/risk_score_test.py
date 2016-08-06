@@ -12,8 +12,8 @@ def risk_test():
 
 	while not rospy.is_shutdown():
 
-		risk_score = 3
-		print "risk score is ", risk_score
+		risk_score = 4
+		#print "risk score is ", risk_score
 		pub.publish(risk_score)
 
 if __name__ == '__main__':

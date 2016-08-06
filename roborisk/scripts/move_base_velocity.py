@@ -8,7 +8,8 @@ from std_msgs.msg import Float64
 twist = Twist()
 
 # percentage of increase in velocity
-vel_increase = 1.5
+vel_increase = 3.5
+angular_speed = 3.5
 risk_score = 0.0
 
 def callback_risk(data):
@@ -41,7 +42,7 @@ def get_velocity(data):
 	twist.linear.x = x * vel_increase
 	twist.linear.y = y
 	twist.linear.z = z
-	twist.angular.z = angular_z
+	twist.angular.z = angular_z * angular_speed
 
 def move_base_velocity():
 	rospy.Subscriber('move_base/cmd_vel', Twist, get_velocity)
@@ -49,7 +50,7 @@ def move_base_velocity():
 	pub = rospy.Publisher('cmd_vel',Twist, queue_size = 1)
 	rospy.init_node('move_base_vel_update')
 
-	rate = rospy.Rate(10.0)
+	rate = rospy.Rate(30.0)
 
 	#change_vel(1.5)
 
@@ -57,7 +58,7 @@ def move_base_velocity():
 
 		change_vel(risk_score)
 
-		print risk_score, vel_increase
+		#print risk_score, vel_increase
 
 		#print twist.linear.x, twist.angular.z
 

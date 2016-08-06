@@ -20,7 +20,7 @@ from std_msgs.msg import Float64
 def gtracker():
 
    rospy.init_node('get_drone_location')
-
+   """
    drone_position_x = rospy.Publisher('drone_position_x', Float64, queue_size=10)
    drone_position_z = rospy.Publisher('drone_position_z', Float64, queue_size=10)
    drone_position_y = rospy.Publisher('drone_position_y', Float64, queue_size=10)
@@ -30,8 +30,18 @@ def gtracker():
    robot_position_z = rospy.Publisher('robot_position_z', Float64, queue_size=10)
    robot_position_y = rospy.Publisher('robot_position_y', Float64, queue_size=10)
    robot_orientation_z = rospy.Publisher('robot_orientation', Float64, queue_size=10)
+   """
+   drone_position_x = rospy.Publisher('drone_position_x', Float64, queue_size=0)
+   drone_position_z = rospy.Publisher('drone_position_z', Float64, queue_size=0)
+   drone_position_y = rospy.Publisher('drone_position_y', Float64, queue_size=0)
+   drone_orientation_z = rospy.Publisher('drone_orientation', Float64, queue_size=0)
 
-   rate = rospy.Rate(5)
+   robot_position_x = rospy.Publisher('robot_position_x', Float64, queue_size=0)
+   robot_position_z = rospy.Publisher('robot_position_z', Float64, queue_size=0)
+   robot_position_y = rospy.Publisher('robot_position_y', Float64, queue_size=0)
+   robot_orientation_z = rospy.Publisher('robot_orientation', Float64, queue_size=0)
+
+   rate = rospy.Rate(10)
 
    while not rospy.is_shutdown():
 
@@ -64,13 +74,13 @@ def gtracker():
       drone_position_x.publish(drone_x)
       drone_orientation_z.publish(drone_oz)
 
-      #print droneState.pose.position
+      #
+      print robot_x, robot_y, drone_x, drone_y
 
       rate.sleep()
 
 if __name__ == '__main__':
    try:
-
 
       gtracker()
    except rospy.ROSInterruptException:

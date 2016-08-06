@@ -82,7 +82,7 @@ def pursuit():
 	rate = rospy.Rate(10.0)
 	while not rospy.is_shutdown():
 
-		angularSpeed = 3.0
+		angularSpeed = 2.0
 
 		relative_x = robot_x - drone_x
 		relative_y = robot_y - drone_y
@@ -141,7 +141,7 @@ def pursuit():
 
 		#if robot_qz == drone_qz:
 			cmd.angular.z = 0.0 
-			#cmd.linear.x = 4.0
+			cmd.linear.x = 0.5
 			#print "it's facing the robot"
 
 		elif robot_qz < drone_qz:
@@ -172,7 +172,7 @@ def pursuit():
 
 		print robot_qz, drone_qz, relative_angle, d_r
 
-		#pub.publish(cmd)
+		pub.publish(cmd)
 
 if __name__ == '__main__':
 
