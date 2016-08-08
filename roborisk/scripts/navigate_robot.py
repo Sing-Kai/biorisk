@@ -50,7 +50,7 @@ min_x = 0.0
 min_y = 0.0
 
 #goal for gmapping, update to give robot goal
-goal_x = 0.0
+goal_x = 3.5
 goal_y = 0.0
 goal_z = 0.0
 
@@ -194,7 +194,7 @@ def get_parameters():
  
 def navigationMission(goal_x, goal_y, goal_z):
 
-    rospy.Subscriber("/amcl_pose", PoseWithCovarianceStamped, callback_pose)
+    #rospy.Subscriber("/amcl_pose", PoseWithCovarianceStamped, callback_pose)
     print "navigate to main goal"
     nav_goal = create_nav_goal(goal_x, goal_y, goal_z)
     nav_as.send_goal(nav_goal)
@@ -213,15 +213,15 @@ def navigationMission(goal_x, goal_y, goal_z):
         #if risk_score == 4:
         if distance <= 2:
             print "abandon mission, implementing fleeing"
-            #nav_as.cancel_all_goals()    
+            nav_as.cancel_all_goals()    
             start_defence_complete = protean(risk_score)              
         
         # once defence is complete return to pursing original goal
         if distance > 2 and start_defence_complete:
 
             print "returning to mission", goal_x, goal_y
-            nav_goal = create_nav_goal(goal_x, goal_y, goal_z)
-            nav_as.send_goal(nav_goal)
+            n_nav_goal = create_nav_goal(goal_x, goal_y, goal_z)
+            nav_as.send_goal(n_nav_goal)
 
         if capture_signal:
             print "captured, mission failed"
@@ -365,7 +365,7 @@ if __name__=='__main__':
     rospy.init_node("navigation_mission")
 
     # Read the current pose topic
-    #rospy.Subscriber("/amcl_pose", PoseWithCovarianceStamped, callback_pose)
+    rospy.Subscriber("/amcl_pose", PoseWithCovarianceStamped, callback_pose)
     rospy.Subscriber('capture_signal', Bool, callback_capture)
     rospy.Subscriber('risk_score', Float64, callback_risk)
 
@@ -402,10 +402,27 @@ if __name__=='__main__':
     nav_as.wait_for_server()
     rospy.loginfo("Connected.")
     rospy.loginfo("Creating navigation goal...")
+    #print "goal location is", goal_x, goal_y
+    
 
-    print "goal location is", goal_x, goal_y
-    navigationMission(goal_x, goal_y, goal_z)
+    
+    #navigationMission(goal_x, goal_y, goal_z)
     #directionGoal()
     #randomXYaxis()
     #proximityXY()
     #switch(2, 6)
+    test_distance = 3
+
+    while not rospy.is_shutdown():
+        goal = create_nav_goal(-3.5, 0.0, 0.0)
+        nav_as.send_goal(goal)
+        nav_as.wait_for_server()
+        if test_distance == 2:
+            nav_as.wait_for_server()
+            print "goal cancelled"
+            nav_as.cancel_all_goals()   
+        #nav_as.wait_for_result()
+        nav_res = nav_as.get_result()
+        nav_state = nav_as.get_state()
+        print "Result: ", str(nav_res) # always empty, be careful
+        print "Goal Complete: Nav state: ", str(nav_state) # use this, 3 is SUCCESS, 4 is ABORTED (couldnt get there), 5 REJECTED (the goal is not attainable)

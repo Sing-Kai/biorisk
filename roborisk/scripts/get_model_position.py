@@ -75,8 +75,8 @@ def gtracker():
       drone_orientation_z.publish(drone_oz)
 
       #
-      print robot_x, robot_y, drone_x, drone_y
-
+      #print robot_x, robot_y, drone_x, drone_y
+      print robotState.pose.orientation
       rate.sleep()
 
 if __name__ == '__main__':
