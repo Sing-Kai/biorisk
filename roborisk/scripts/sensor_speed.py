@@ -9,7 +9,6 @@ relative_distance = 0.0
 speed = 0.0
 list_d = []
 
-
 def get_distance_data(data):
 
 	global relative_distance
@@ -152,7 +151,7 @@ def speedSensor():
 		distance_difference = round(first_distance - second_distance)
 		speed = distance_difference/total_seconds
 
-		print first_distance, second_distance, distance_difference, speed
+		#print first_distance, second_distance, distance_difference, speed
 
 		f_time = rospy.get_time()
 		current_seconds = round(f_time)
@@ -163,7 +162,7 @@ def speedSensor():
 		# once 5 samples have been taken the analyse the slope of data to see if this is increase or decreasing
 		if len(list_d) == 5:
 			speed_risk = find_slope(list_d)
-			print list_d, speed_risk
+			print speed_risk #list_d, 
 
 			pub.publish(speed_risk)
 			rospy.sleep(1.0)

@@ -163,7 +163,7 @@ def distanceSensor():
 		# once 5 samples have been taken the analyse the slope of data to see if this is increase or decreasing
 		if len(list_d) == 5:
 			distance_risk = find_slope(list_d)
-			#print list_d, distance_risk
+			print round(distance_risk) , list_d
 
 			pub.publish(distance_risk)
 			rospy.sleep(1.0)

@@ -2,7 +2,6 @@
 import rospy
 import math
 import geometry_msgs.msg
-
 from std_msgs.msg import Float64
 
 
@@ -47,7 +46,7 @@ def findDistance():
 
 	rospy.init_node('relative_distance_manager')
 	distance = rospy.Publisher('relative_distance',Float64, queue_size = 1)
-	rate = rospy.Rate(10.0)
+	rate = rospy.Rate(5.0)
 
 	while not rospy.is_shutdown():
 

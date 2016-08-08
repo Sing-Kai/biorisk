@@ -9,6 +9,7 @@ robot_x = 0.0
 robot_y = 0.0
 robot_z = 0.0
 
+
 def get_robot_x(data):
 
 	global robot_x
@@ -35,37 +36,34 @@ def batteryTime():
 	rospy.init_node('battery')
 
 	# subcribe to robot position 
-	rospy.Subscriber('robot_position_x', Float64, get_robot_x)		
-	rospy.Subscriber('robot_position_y', Float64, get_robot_y)
-	rospy.Subscriber('robot_position_z', Float64, get_robot_z)
+	#rospy.Subscriber('robot_position_x', Float64, get_robot_x)		
+	#rospy.Subscriber('robot_position_y', Float64, get_robot_y)
+	#rospy.Subscriber('robot_position_z', Float64, get_robot_z)
 
 	start_time = rospy.get_time()
 
 	timer = True
-	rate = rospy.Rate(1.0)
+	rate = rospy.Rate(5.0)
+	
+	start = rospy.Time.now()
 
-	while timer:
-
-		current_time = rospy.get_time()
-
-		seconds = current_time - start_time
-
-		#print seconds
-
-		if seconds > 10:
-			print seconds
-			timer = False
+	while not rospy.is_shutdown():
 
 
-		percentage = (seconds/10.0) * 100
+		timer = rospy.Time.now()
+		duration_seconds = rospy.Duration(600) # total battery life of robot
+		total = start + duration_seconds
 
-		battery_life = 100 - percentage
+		#print start.secs, timer.secs, three_seconds.secs, count_to_three.secs
 
-		print battery_life
+		battery_life = (timer - start)/duration_seconds * 100
 
-		#relative_distance = math.sqrt(dx ** 2 + dy ** 2 + dz ** 2)
-		#rospy.Timer(rospy.Duration(2), timer_callback)
-		pub.publish(battery_life)
+		#if total <= timer:
+		#	print "times up"
+
+		if battery_life <= 100.0:
+			pub.publish(battery_life)
+			#print battery_life
 
 if __name__ == '__main__':
 
