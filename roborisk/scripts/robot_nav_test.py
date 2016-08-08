@@ -61,14 +61,14 @@ def get_distance(data):
 	global distance
 	distance = data.data 
 
-def directionGoal():
+def directionGoal(x, y):
 
 	print robot_x, robot_y, drone_x, drone_y
 
 	selectAxis = 0
 
-	proximity_x = 2
-	proximity_y = 2
+	proximity_x = x
+	proximity_y = y
 
 	# if 0 false keep y constant and if 1 true then keey x constant
 	selectAxis = randomXYaxis()
@@ -125,6 +125,18 @@ def directionGoal():
 	#print "these are still showing as float!", int(proximity_goal_x), int(proximity_goal_y)
 	return int(proximity_goal_x), int(proximity_goal_y)
 
+def proteanGoal():
+
+	for i in range(1):
+		randx = random.randint(3, 5)
+		randy = random.randint(3, 5)
+
+		subgoalx, subgoaly = directionGoal(randx, randy)
+
+		print "protean flight", randx, randy, subgoalx, subgoaly, i
+		proximity_goal(subgoalx, subgoaly)
+
+
 #selects x or y axises for fleeing
 def randomXYaxis():
 
@@ -134,8 +146,15 @@ def randomXYaxis():
 
 	return number
 
-def proximityXY(proximity_x, proximity_y, selectAxis):
+def randomXY(robot_x, robot_y):
 
+	min_x = robot_x + 1
+	max_x = robot_x + 6
+	x = random.randint(1,6)
+	y = random.randint(1,6)
+	return x, y
+
+def proximityXY(proximity_x, proximity_y, selectAxis):
 
 	#proximity_x = -2
 	#proximity_y = 2
@@ -189,12 +208,9 @@ def switch(min_v, max_v):
 
 def goalCheck(goal_distance):
 
-
-
 	if goal_distance < 0.5:
 
 		return True
-	
 
 	return False		
 
@@ -296,7 +312,7 @@ def navigate_goal(goal_x, goal_y):
 		else:
 
 			if relative_angle - 5 <= yaw <= relative_angle + 5:
-				print "facing target"
+				print "heading towards main goal"
 				cmd.angular.z = 0.0 
 				cmd.linear.x = linearSpeed
 
@@ -356,8 +372,8 @@ def proximity_goal(goal_x, goal_y):
 
 		cmd = geometry_msgs.msg.Twist()			
 
-		angularSpeed = 4.0
-		linearSpeed = 0.5
+		angularSpeed = 5.0
+		linearSpeed = 2.0
 
 		# checks if goal has been reach and stops process
 		
@@ -379,7 +395,7 @@ def proximity_goal(goal_x, goal_y):
 
 			if relative_angle - 5 <= yaw <= relative_angle + 5:
 
-				print "facing target"
+				print "Fleeing mode"
 				cmd.angular.z = 0.0 
 				cmd.linear.x = linearSpeed
 
@@ -424,21 +440,26 @@ def mainGoal():
 		#print "stopped main", distance
 
 		
-		if distance <= 4:
-			print "initiate proximity ", distance			
-			subgoalx, subgoaly = directionGoal()
+		if distance <= 1:
+			print "initiate proximity ", distance	
+
+			subgoalx, subgoaly = directionGoal(2, 2)
 			proximity_goal(subgoalx, subgoaly)
 
-		if distance <=1:
+		if distance <= 4:
+			"""
+			randx = random.randint(3, 5)
+			randy = random.randint(3, 5)
 
-			print "protean flight"
+			subgoalx, subgoaly = directionGoal(randx, randy)
+
+			print "protean flight", randx, randy, subgoalx, subgoaly
+			proximity_goal(subgoalx, subgoaly)
+			"""
+			proteanGoal()
 
 		checkMainGoal()	
 		
-#	risk = 0
-	
-#	while not rospy.is_shutdown():
-
 	checkMainGoal(main_goal_x, main_goal_y, robot_x, robot_y)
 
 if __name__ == '__main__':
