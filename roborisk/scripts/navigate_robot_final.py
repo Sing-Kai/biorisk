@@ -4,11 +4,9 @@ import math
 import tf
 import geometry_msgs.msg
 import random
-from std_msgs.msg import Float64
+from std_msgs.msg import Float64, Bool
 from gazebo_msgs.srv import GetModelState
 
-speed = .5
-turn = 1
 max_height = 2.0
 drone_z = 0.0
 drone_x = 0.0
@@ -20,6 +18,13 @@ robot_z = 0.0
 distance = 0.0
 main_goal_x = 3.0
 main_goal_y = -3.0
+capture_signal = False
+
+escape_angularSpeed = 5.0
+escape_linearSpeed = 0.5
+
+goal_angularSpeed = 5.0
+goal_linearSpeed = 0.5
 
 def get_drone_z(data):
 
@@ -61,9 +66,15 @@ def get_distance(data):
 	global distance
 	distance = data.data 
 
+def callback_capture(data):
+
+    global capture_signal
+
+    capture_signal = data.data
+
 def directionGoal(x, y):
 
-	print robot_x, robot_y, drone_x, drone_y
+	#print robot_x, robot_y, drone_x, drone_y
 
 	selectAxis = 0
 
@@ -125,6 +136,8 @@ def directionGoal(x, y):
 	#print "these are still showing as float!", int(proximity_goal_x), int(proximity_goal_y)
 	return int(proximity_goal_x), int(proximity_goal_y)
 
+
+# random protean fleeing
 def proteanGoal():
 
 	for i in range(1):
@@ -135,7 +148,6 @@ def proteanGoal():
 
 		print "protean flight", randx, randy, subgoalx, subgoaly, i
 		proximity_goal(subgoalx, subgoaly)
-
 
 #selects x or y axises for fleeing
 def randomXYaxis():
@@ -154,10 +166,8 @@ def randomXY(robot_x, robot_y):
 	y = random.randint(1,6)
 	return x, y
 
+# function used for selecting random postional goal for proximty maintenance and protean fleeing
 def proximityXY(proximity_x, proximity_y, selectAxis):
-
-	#proximity_x = -2
-	#proximity_y = 2
 
 	#off set current robot location proximity
 	x = int(robot_x) + proximity_x # robot location
@@ -176,9 +186,6 @@ def proximityXY(proximity_x, proximity_y, selectAxis):
 	#print y_min, y_max
 		print "keep x constant and vary y"
 		y = random.randint(y_min, y_max)
-
-
-	#print x, y, x - intial_x, y -intial_y
 
 	# produce random y coordinates with fixed x
 	else:
@@ -203,7 +210,6 @@ def switch(min_v, max_v):
 		max_v = min_v
 		min_v = temp_v
 
-	#print min_v, max_v
 	return min_v, max_v
 
 def goalCheck(goal_distance):
@@ -251,6 +257,8 @@ def navigate_goal(goal_x, goal_y):
 	#rospy.Subscriber('robot_orientation', Float64, get_robot_orientation)
 	#rospy.Subscriber('relative_distance', Float64, get_distance)
 
+
+	global goal_angularSpeed, goal_linearSpeed
 	rate = rospy.Rate(10.0)
 	keepLoop = True
 
@@ -285,51 +293,53 @@ def navigate_goal(goal_x, goal_y):
 
 		cmd = geometry_msgs.msg.Twist()			
 
-		angularSpeed = 4.0
-		linearSpeed = 0.5
+		#global goal_angularSpeed, goal_linearSpeed
 
-		# test risk
+		if capture_signal:
+			print "Robot captured whilst navigating to main goal"
+			goal_angularSpeed, goal_linearSpeed = stopNav()
+			keepLoop = False		
 
-		if distance <= 4:
-			print "drone nearby"
-			angularSpeed, linearSpeed = stopNav()
+		# risk test this must match parameters in the mainGoal() function
+		if distance <= 2:
+			print "Drone nearby"
+			goal_angularSpeed, goal_linearSpeed = stopNav()
 			keepLoop = False
 
 		# checks if goal has been reach and stops process
 		
 		if goalCheck(goal_distance):
-			print "reached goal"
-			angularSpeed, linearSpeed = stopNav()
+			print "Reached goal"
+			goal_angularSpeed, goal_linearSpeed = stopNav()
 			keepLoop = False
-
 
 		# edge case when relative again is 180 or -180
 		if angle_difference <= -300 or 300 <= angle_difference:
 			print "edge case" 
 			cmd.angular.z = 0.0 
-			cmd.linear.x = linearSpeed
+			cmd.linear.x = goal_linearSpeed
 
 		else:
 
 			if relative_angle - 5 <= yaw <= relative_angle + 5:
 				print "heading towards main goal"
 				cmd.angular.z = 0.0 
-				cmd.linear.x = linearSpeed
+				cmd.linear.x = goal_linearSpeed
 
 			elif relative_angle < yaw:
-				cmd.angular.z = angularSpeed * (-0.2)
+				cmd.angular.z = goal_angularSpeed * (-0.2)
 				#cmd.linear.x = 0.5
 
 			elif relative_angle > yaw:
-				cmd.angular.z = angularSpeed * (0.2)
+				cmd.angular.z = goal_angularSpeed * (0.2)
 				#cmd.linear.x = 0.5		
 
 			elif -(relative_angle) > -(yaw):
-				cmd.angular.z = angularSpeed * (-0.2)
+				cmd.angular.z = goal_angularSpeed * (-0.2)
 				#cmd.linear.x = 0.5			
 			else:
 				#cmd.angular.z -= angularSpeed
-				cmd.angular.z = angularSpeed * (-0.2)
+				cmd.angular.z = goal_angularSpeed * (-0.2)
 
 				#cmd.linear.x = 0.5
 
@@ -340,6 +350,8 @@ def proximity_goal(goal_x, goal_y):
 
 	rate = rospy.Rate(10.0)
 	keepLoop = True
+
+	global escape_angularSpeed, escape_linearSpeed
 
 	while keepLoop:
 
@@ -372,51 +384,44 @@ def proximity_goal(goal_x, goal_y):
 
 		cmd = geometry_msgs.msg.Twist()			
 
-		angularSpeed = 5.0
-		linearSpeed = 2.0
+		#checks if robot has been captured by drone
+		if capture_signal:
+			print "Robot captured whilst fleeing"
+			angularSpeed, linearSpeed = stopNav()
+			keepLoop = False		
 
 		# checks if goal has been reach and stops process
-		
 		if goalCheck(goal_distance):
-
-			print "reached goal"
-			angularSpeed, linearSpeed = stopNav()
+			print "Reached fleeing goal"
+			escape_angularSpeed, lescape_linearSpeed = stopNav()
 			keepLoop = False
 		
 		# edge case when relative again is 180 or -180
 		if angle_difference <= -300 or 300 <= angle_difference:
-
 			print "edge case" 
-
 			cmd.angular.z = 0.0 
-			cmd.linear.x = linearSpeed
+			cmd.linear.x = escape_linearSpeed
 
 		else:
 
 			if relative_angle - 5 <= yaw <= relative_angle + 5:
-
-				print "Fleeing mode"
+				#print "Fleeing mode"
 				cmd.angular.z = 0.0 
-				cmd.linear.x = linearSpeed
-
+				cmd.linear.x = escape_linearSpeed
 			elif relative_angle < yaw:
-
-				cmd.angular.z = angularSpeed * (-0.2)
+				cmd.angular.z = escape_angularSpeed * (-0.2)
 				#cmd.linear.x = 0.5
 
 			elif relative_angle > yaw:
-
-				cmd.angular.z = angularSpeed * (0.2)
+				cmd.angular.z = escape_angularSpeed * (0.2)
 				#cmd.linear.x = 0.5		
 
 			elif -(relative_angle) > -(yaw):
-
-				cmd.angular.z = angularSpeed * (-0.2)
-				#cmd.linear.x = 0.5
-			
+				cmd.angular.z = escape_angularSpeed * (-0.2)
+				#cmd.linear.x = 0.5			
 			else:
 				#cmd.angular.z -= angularSpeed
-				cmd.angular.z = angularSpeed * (-0.2)
+				cmd.angular.z = escape_angularSpeed * (-0.2)
 
 				#cmd.linear.x = 0.5		
 		pub.publish(cmd)
@@ -437,25 +442,15 @@ def mainGoal():
 		subgoalx, subgoaly = main_goal_x, main_goal_y
 		navigate_goal(subgoalx, subgoaly)
 
-		#print "stopped main", distance
-
-		
+		# testing proximity		
 		if distance <= 1:
-			print "initiate proximity ", distance	
-
+			print "Execute proximity ", distance	
 			subgoalx, subgoaly = directionGoal(2, 2)
 			proximity_goal(subgoalx, subgoaly)
 
-		if distance <= 4:
-			"""
-			randx = random.randint(3, 5)
-			randy = random.randint(3, 5)
-
-			subgoalx, subgoaly = directionGoal(randx, randy)
-
-			print "protean flight", randx, randy, subgoalx, subgoaly
-			proximity_goal(subgoalx, subgoaly)
-			"""
+		# testing protean fleeing
+		if distance <= 2:
+			print "Excute protean fleeing"
 			proteanGoal()
 
 		checkMainGoal()	
@@ -474,9 +469,10 @@ if __name__ == '__main__':
 	rospy.Subscriber('robot_position_z', Float64, get_robot_z)
 	rospy.Subscriber('robot_orientation', Float64, get_robot_orientation)
 	rospy.Subscriber('relative_distance', Float64, get_distance)
-	print distance
+	rospy.Subscriber('capture_signal', Bool, callback_capture)
+	
 	try:
-		#print "test1"
+
 		mainGoal()
 	except rospy.ROSInterruptException:
 		pass

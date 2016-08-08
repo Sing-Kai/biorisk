@@ -6,6 +6,7 @@ import tf
 import geometry_msgs.msg
 
 from std_msgs.msg import Float64
+from gazebo_msgs.srv import GetModelState
 
 
 speed = .5
@@ -71,18 +72,13 @@ def pursuit():
 	rospy.Subscriber('robot_position_y', Float64, get_robot_y)
 	rospy.Subscriber('robot_position_z', Float64, get_robot_z)
 
-	x = 0
-	y = 0
-	z = 1
-	th = 0
-
-	origin_x = 0
-	origin_y = 0
+	height_speed_z = 1
 
 	rate = rospy.Rate(10.0)
 	while not rospy.is_shutdown():
 
-		angularSpeed = 2.0
+		getState = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
+		droneState = getState(model_name="quadrotor")
 
 		relative_x = robot_x - drone_x
 		relative_y = robot_y - drone_y
@@ -94,83 +90,67 @@ def pursuit():
 		relative_angle = math.atan2(relative_y, relative_x)
 		quaternion = tf.transformations.quaternion_from_euler(0, 0, relative_angle)
 		quaternion_z = quaternion[2]
-	
 
-		angular = math.atan2(relative_y, relative_x)
-
-		linear = math.sqrt(relative_x ** 2 + relative_y ** 2) # Distance from Robot
-
-
-		drone_angle = math.atan2(drone_y, drone_x) * (180.0/math.pi)
-
-		cmd = geometry_msgs.msg.Twist()
-		cmd.linear.z = z*0.5				
-
-		"""
-		q = (0.0, 0.0, drone_orientation, 0.0)
-		euler = tf.transformations.euler_from_quaternion(q)
+		quaternion = (
+		droneState.pose.orientation.x,
+		droneState.pose.orientation.y,
+		droneState.pose.orientation.z,
+		droneState.pose.orientation.w)
+		euler = tf.transformations.euler_from_quaternion(quaternion)
 		roll = euler[0]
 		pitch = euler[1]
 		yaw = euler[2]
 
-		r_angle = math.radians(yaw)
-		"""
+		yaw = yaw * (180.0/math.pi)
+		relative_angle = relative_angle * (180.0/math.pi)
+		angle_difference = relative_angle - yaw
+	
+		print round(yaw), round(relative_angle), round(angle_difference)
 
+		#angular = math.atan2(relative_y, relative_x)
 
+		#linear = math.sqrt(relative_x ** 2 + relative_y ** 2) # Distance from Robot
 
+		#drone_angle = math.atan2(drone_y, drone_x) * (180.0/math.pi)
+
+		cmd = geometry_msgs.msg.Twist()
+		cmd.linear.z = height_speed_z * 0.5				
+		angularSpeed = 2.0
+		linearSpeed = 0.5
+
+		# limit drone height
 		if round(drone_z) == 2:
-			z = 0
+			height_speed_z = 0
 
-		robot_qz = round(quaternion_z, 2)
-		drone_qz = round(drone_orientation, 2)
-
-		#relative_angle = relative_angle * (180.0/math.pi)
-
-		ninty = robot_qz - 0.01
-		hundredten = robot_qz + 0.01
-
-
-		d_r = robot_qz - drone_qz
-
-		"""
-		if robot_qz < 0:
-			robot_qz = -robot_qz
-		"""
-		
-		if -0.1 <= d_r <= 0.1:
-
-		#if robot_qz == drone_qz:
+		# drone navigation - move towards robot it is facing it else rotate until it faces robot
+		if angle_difference <= -300 or 300 <= angle_difference:
+			print "edge case" 
 			cmd.angular.z = 0.0 
-			cmd.linear.x = 0.5
-			#print "it's facing the robot"
+			cmd.linear.x = linearSpeed
 
-		elif robot_qz < drone_qz:
-
-			#cmd.angular.z -= angularSpeed
-			cmd.angular.z = angularSpeed * (-0.5)
-			#cmd.linear.x = 0.8
-
-		elif robot_qz > drone_qz:
-
-			#cmd.angular.z += angularSpeed
-			cmd.angular.z = angularSpeed * (0.5)
-			#cmd.linear.x = 0.8		
-
-		elif -(robot_qz) > -(drone_qz):
-
-			#cmd.angular.z -= angularSpeed
-			cmd.angular.z = angularSpeed * (-0.5)
-			#cmd.linear.x = 0.8
-		
 		else:
-			#cmd.angular.z -= angularSpeed
-			cmd.angular.z = angularSpeed * (-0.5)
 
-			#cmd.linear.x = 0.8
-		
+			if relative_angle - 5 <= yaw <= relative_angle + 5:
+				print "heading towards main goal"
+				cmd.angular.z = 0.0 
+				cmd.linear.x = linearSpeed
 
+			elif relative_angle < yaw:
+				cmd.angular.z = angularSpeed * (-0.2)
+				#cmd.linear.x = 0.5
 
-		print robot_qz, drone_qz, relative_angle, d_r
+			elif relative_angle > yaw:
+				cmd.angular.z = angularSpeed * (0.2)
+				#cmd.linear.x = 0.5		
+
+			elif -(relative_angle) > -(yaw):
+				cmd.angular.z = angularSpeed * (-0.2)
+				#cmd.linear.x = 0.5			
+			else:
+				#cmd.angular.z -= angularSpeed
+				cmd.angular.z = angularSpeed * (-0.2)
+
+		#print robot_qz, drone_qz, relative_angle, d_r
 
 		pub.publish(cmd)
 

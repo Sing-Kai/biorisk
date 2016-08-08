@@ -74,7 +74,7 @@ def capture_range(robot_rangex):
 	capture_robot = False
 	#capture_distance = 2
 
-	if robot_range < 3.0:
+	if robot_range < 1.0:
 
 		now = rospy.Time.now()
 
@@ -124,10 +124,10 @@ def findDistance():
 		robot_range = findRange(dx, dy)
 		now = rospy.Time.now()
 
-		three_seconds = rospy.Duration(5)
+		three_seconds = rospy.Duration(3)
 		count_to_three = now + three_seconds
 
-		while robot_range < 3:
+		while robot_range < 1.0:
 			timer = rospy.Time.now()
 			dx = drone_x - robot_x
 			dy = drone_y - robot_y
@@ -138,8 +138,7 @@ def findDistance():
 				capture_signal = True
 				capture.publish(capture_signal)
 				print "Successful capture", capture_signal
-				
-					
+									
 			print now.secs, timer.secs, count_to_three.secs
 			capture_signal = False
 
