@@ -66,7 +66,7 @@ def gtracker():
 
       #
       #print robot_x, robot_y, drone_x, drone_y
-      print robotState.pose.position.x, robotState.pose.position.y
+      #print robotState.pose.position.x, robotState.pose.position.y
       rate.sleep()
 
 if __name__ == '__main__':

@@ -169,7 +169,7 @@ def soundSensor():
 		if len(list_s) == 5:
 			sound_risk = find_slope(list_s)
 
-			print sound_risk , list_s
+			#print sound_risk , list_s
 
 			pub.publish(sound_risk)
 			rospy.sleep(1.0)

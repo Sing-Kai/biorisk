@@ -146,6 +146,7 @@ def distanceSensor():
 
 	final_list = []
 	intial_seconds = 0
+	distnace_score = 0.0
 
 	while not rospy.is_shutdown():
 
@@ -153,7 +154,8 @@ def distanceSensor():
 		seconds = round(f_time)
 
 		# distance_score increases as drone gets closer to the robot
-		distnace_score = (1.0/relative_distance) * 100
+		if 0.0 < relative_distance:
+			distnace_score = (1.0/relative_distance) * 100
 
 		#print distnace_score, seconds
 
@@ -163,7 +165,7 @@ def distanceSensor():
 		# once 5 samples have been taken the analyse the slope of data to see if this is increase or decreasing
 		if len(list_d) == 5:
 			distance_risk = find_slope(list_d)
-			print round(distance_risk) , list_d
+			#print round(distance_risk) #, list_d
 
 			pub.publish(distance_risk)
 			rospy.sleep(1.0)

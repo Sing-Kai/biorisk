@@ -34,7 +34,6 @@ def soundSimulator():
 	rospy.init_node('sound_simulator')
 	rospy.Subscriber('relative_distance', Float64, get_distance)
 
-
 	rate = rospy.Rate(5.0)
 	ratio = 0.0
 	while not rospy.is_shutdown():
@@ -45,7 +44,7 @@ def soundSimulator():
 
 		sound_pressure = decibel * ratio
 
-		print sound_pressure
+		#print sound_pressure
 
 		pub.publish(sound_pressure)
 

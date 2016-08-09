@@ -162,7 +162,7 @@ def speedSensor():
 		# once 5 samples have been taken the analyse the slope of data to see if this is increase or decreasing
 		if len(list_d) == 5:
 			speed_risk = find_slope(list_d)
-			print speed_risk #list_d, 
+			#print speed_risk #list_d, 
 
 			pub.publish(speed_risk)
 			rospy.sleep(1.0)

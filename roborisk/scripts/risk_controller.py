@@ -12,8 +12,8 @@ speed_risk = 0.0
 
 max_sound = 8.0
 max_distance = 14.0
-max_speed = 0.6
-max_battery = 100
+max_speed = 1.0
+max_battery = 100.0
 
 def get_sound_risk(data):
 

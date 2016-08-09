@@ -105,7 +105,7 @@ def pursuit():
 		relative_angle = relative_angle * (180.0/math.pi)
 		angle_difference = relative_angle - yaw
 	
-		print round(yaw), round(relative_angle), round(angle_difference)
+		#print round(yaw), round(relative_angle), round(angle_difference)
 
 		#angular = math.atan2(relative_y, relative_x)
 
@@ -124,14 +124,14 @@ def pursuit():
 
 		# drone navigation - move towards robot it is facing it else rotate until it faces robot
 		if angle_difference <= -300 or 300 <= angle_difference:
-			print "edge case" 
+			#print "edge case" 
 			cmd.angular.z = 0.0 
 			cmd.linear.x = linearSpeed
 
 		else:
 
 			if relative_angle - 5 <= yaw <= relative_angle + 5:
-				print "heading towards main goal"
+				#print "heading towards main goal"
 				cmd.angular.z = 0.0 
 				cmd.linear.x = linearSpeed
 

@@ -4,7 +4,6 @@ import math
 import geometry_msgs.msg
 from std_msgs.msg import Float64
 
-
 drone_z = 0.0
 drone_x = 0.0
 drone_y = 0.0
@@ -55,7 +54,7 @@ def findDistance():
 		dz = drone_z - robot_z
 
 		relative_distance = math.sqrt(dx ** 2 + dy ** 2 + dz ** 2)
-		print relative_distance
+		#print relative_distance
 
 		distance.publish(relative_distance)
 
