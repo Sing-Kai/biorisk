@@ -23,61 +23,27 @@ goal_y = 0.0
 robot_drone_distance = 0.0
 robot_goal_distance = 0.0
 
-#random.seed(0)
-#random.seed(7)
-#random.seed(8)
-#random.seed(9)
-#random.seed(12)
-#random.seed(13)
-#random.seed(14)
-#random.seed(17)
-#random.seed(18)
-#random.seed(19)
-#random.seed(20)
-#random.seed(24)
-#random.seed(27)
-#random.seed(28)
-#random.seed(30)
-#random.seed(32)
-#random.seed(33)
-#random.seed(34)
-#random.seed(36)
-#random.seed(40)
-#random.seed(41)
-#random.seed(42)
-#random.seed(43)
-#random.seed(44)
-#random.seed(46)
-#random.seed(49)
-#random.seed(52)
-#random.seed(56)
-#random.seed(58)
-#random.seed(63)
-#random.seed(64)
-#random.seed(65)
-#random.seed(71)
-#random.seed(73)
-#random.seed(75)
-#random.seed(76)
-#random.seed(78)
-#random.seed(82)
-#random.seed(83)
-#random.seed(88)
-#random.seed(90)
-#random.seed(94)
-#random.seed(96)
-
 # test below list
+#set 1
 #random.seed(40) # goal: 9.2 3.3, goal distance: 11.0, robot to drone: 15.0
-random.seed(20) # goal: -4.8 2.7,  goal distance: 13.0,  robot to drone: 5.0 # check if too close
+#set 2
+#random.seed(20) # goal: -4.8 2.7,  goal distance: 13.0,  robot to drone: 5.0 # check if too close
+#set 3
 #random.seed(96) # goal: 6.4 5.2,  goal distance: 9.0,  robot to drone: 14.0
+#set 4
 #random.seed(33) # goal: 3.0 7.8,  goal distance: 5.0,  robot to drone: 9.0 # check if too close
+#set 5
 #random.seed(30) # goal: -5.8 -4.9,  goal distance: 7.0,  robot to drone: 13.0,
+#set 6
 #random.seed(75) # goal: 3.5 3.4,  goal distance: 7.0,  robot to drone: 11.0
+#set 7
 #random.seed(58) # goal: -9.2 -1.0,  goal distance: 12.0,  robot to drone: 15.0
+#set 8
 #random.seed(63) # goal: -8.3 5.0,  goal distance: 12.0,  robot to drone: 10.0
+#set 9
 #random.seed(12) # goal: -9.8 -2.5,  goal distance: 11.0, robot to drone: 11.0
-#random.seed(88) # goal: 0.5 3.9,  goal distance: 10.0,  robot to drone: 13.0
+#set 10
+random.seed(88) # goal: 0.5 3.9,  goal distance: 10.0,  robot to drone: 13.0
 
 #list of seeds and coordinates
 """

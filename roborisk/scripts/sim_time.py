@@ -23,9 +23,8 @@ def simulationTime():
 
 		time.sleep(1)
 		timer += 1.0
-		print timer
+		#print timer
 		pub.publish(timer)
-
 
 if __name__ == '__main__':
 

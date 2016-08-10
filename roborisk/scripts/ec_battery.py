@@ -12,8 +12,6 @@ def batteryTime():
 	rospy.init_node('battery')
 	#timer = True
 	rate = rospy.Rate(5.0)
-	
-	#start = rospy.Time.now()
 
 	time_start = time.time()
 

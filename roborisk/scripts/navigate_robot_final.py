@@ -8,15 +8,40 @@ import random
 from std_msgs.msg import Float64, Bool
 from gazebo_msgs.srv import GetModelState
 
-set_number = 2
+#set_number = 1
+#main_goal_x, main_goal_y = 9.2, 3.3
 
-main_goal_x = -4.8
-main_goal_y = 2.7
+#set_number = 2
+#main_goal_x, main_goal_y = -4.8, 2.7
 
-max_time = 30.0
+#set_number = 3
+#main_goal_x, main_goal_y =  6.4, 5.2
+
+#set_number = 4
+#main_goal_x, main_goal_y = 3.0, 7.8
+
+#set_number = 5
+#main_goal_x, main_goal_y = -5.8, -4.9
+
+#set_number = 6
+#main_goal_x, main_goal_y = 3.5, 3.4
+
+#set_number = 7
+#main_goal_x, main_goal_y = -9.2, -1.0
+
+#set_number = 8
+#main_goal_x, main_goal_y = -8.3, 5.0
+
+#set_number = 9
+#main_goal_x, main_goal_y = -9.8, -2.5
+
+set_number = 10
+main_goal_x, main_goal_y = 0.5, 3.9
+
+max_time =180
 
 escape_angularSpeed = 5.0
-escape_linearSpeed = 0.5
+escape_linearSpeed = 1.0
 
 goal_angularSpeed = 5.0
 goal_linearSpeed = 0.5
@@ -33,15 +58,15 @@ capture_signal = False
 sim_time = 0.0
 total_risk = 0.0
 
+# log details of experiment
 def printSimulationDetails():
 
 	global escape_linearSpeed, escape_angularSpeed, sim_time
 	global goal_linearSpeed, goal_angularSpeed
 
 	print "Simulation Finished", sim_time
-	print "Current set:", 2
-	print "escape speed: ", escape_linearSpeed, escape_angularSpeed
-	print "base speed: ", goal_linearSpeed, goal_angularSpeed
+	print "escape speed:", escape_linearSpeed, escape_angularSpeed
+	print "base speed:", goal_linearSpeed, goal_angularSpeed
 	print " "
 
 def finalDetails():
@@ -95,6 +120,8 @@ def callback_capture(data):
 
    capture_signal = data.data
 
+
+# decides on the direction and the magnitue of proximity maintenance
 def directionGoal(x, y):
 
 	#print robot_x, robot_y, drone_x, drone_y
@@ -159,7 +186,7 @@ def directionGoal(x, y):
 	return int(proximity_goal_x), int(proximity_goal_y)
 
 
-# random protean fleeing
+# random protean fleeing 
 def proteanGoal():
 
 	for i in range(1):
@@ -269,15 +296,6 @@ def stopNav():
 
 def navigate_goal(goal_x, goal_y):
 
-	#rospy.Subscriber('drone_position_x', Float64, get_drone_x)
-	#rospy.Subscriber('drone_position_y', Float64, get_drone_y)
-	#rospy.Subscriber('robot_position_x', Float64, get_robot_x)		
-	#rospy.Subscriber('robot_position_y', Float64, get_robot_y)
-	#rospy.Subscriber('robot_position_z', Float64, get_robot_z)
-	#rospy.Subscriber('robot_orientation', Float64, get_robot_orientation)
-	#rospy.Subscriber('relative_distance', Float64, get_distance)
-
-
 	global goal_angularSpeed, goal_linearSpeed
 
 	angularSpeed = goal_angularSpeed
@@ -326,13 +344,13 @@ def navigate_goal(goal_x, goal_y):
 
 		# risk test this must match parameters in the mainGoal() function
 		if 14 < total_risk :
-			print "Drone nearby"
+			#print "Drone nearby"
 			angularSpeed, linearSpeed = stopNav()
 			keepLoop = False
 
 		# checks if goal has been reach and stops process		
 		if goalCheck(goal_distance):
-			print "Reached goal"
+			#print "Reached goal"
 			angularSpeed, linearSpeed = stopNav()
 			keepLoop = False
 
@@ -414,7 +432,7 @@ def proximity_goal(goal_x, goal_y):
 
 		#checks if robot has been captured by drone
 		if capture_signal:
-			print "Robot captured whilst fleeing"
+			print "Robot captured whilst fleeing", sim_time
 			angularSpeed, linearSpeed = stopNav()
 			keepLoop = False 	
 
@@ -426,7 +444,7 @@ def proximity_goal(goal_x, goal_y):
 		
 		# edge case when relative again is 180 or -180
 		if angle_difference <= -300 or 300 <= angle_difference:
-			print "edge case" 
+			#print "edge case" 
 			cmd.angular.z = 0.0 
 			cmd.linear.x = escape_linearSpeed
 
@@ -463,12 +481,11 @@ def checkTime():
 def mainGoal():
 
 	global main_goal_x, main_goal_y
-	#rospy.Subscriber('relative_distance', Float64, get_distance)
-	print "starting main goal"
+
+	print "Current set:", set_number
 
 	stop = False
 
-	#while not rospy.is_shutdown():
 	while not stop:
 
 		stop = checkTime()
@@ -480,17 +497,15 @@ def mainGoal():
 		if 15 <= total_risk <= 30:
 				
 			subgoalx, subgoaly = directionGoal(2, 2)
-			print "Execute proximity ", subgoalx, subgoaly
+			print "Execute proximity ", sim_time
 			proximity_goal(subgoalx, subgoaly)
 
 		# testing protean fleeing
 		if 30 < total_risk < 100:
-			print "Excute Protean fleeing"
+			print "Excute Protean fleeing", sim_time
 			proteanGoal()
 
 		stop = checkMainGoal()
-
-
 
 
 if __name__ == '__main__':
