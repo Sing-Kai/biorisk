@@ -7,12 +7,12 @@ escape speed: 0.5 5.0
 base speed: 0.5 5.0
  
 Current set: 2
-Execute proximity  13.0
+Execute Proximity  13.0
 Reached fleeing goal
-Execute proximity  27.0
+Execute Proximity  27.0
 Reached fleeing goal
 Excute Protean fleeing 55.0
-protean flight 4 4 10 -4 0
+Protean flight 4 4 10 -4 0
 Robot captured whilst fleeing 61.0
 Captured
 Simulation Finished 61.0
@@ -32,7 +32,7 @@ escape speed: 0.5 5.0
 base speed: 0.5 5.0
  
 Current set: 5
-Execute proximity  42.0
+Execute Proximity  42.0
 Reached fleeing goal
 Main goal accomplished
 Simulation Finished 61.0
@@ -64,7 +64,7 @@ escape speed: 0.5 5.0
 base speed: 0.5 5.0
  
 Current set: 10
-Execute proximity  47.0
+Execute Proximity  47.0
 Reached fleeing goal
 Main goal accomplished
 Simulation Finished 74.0
@@ -79,10 +79,10 @@ escape speed: 0.5 5.0
 base speed: 0.5 5.0
  
 Current set: 2
-Execute proximity  25.0
+Execute Proximity  25.0
 Robot captured whilst fleeing 45.0
 Excute Protean fleeing 45.0
-protean flight 4 3 5 6 0
+Protean flight 4 3 5 6 0
 Robot captured whilst fleeing 45.0
 Captured
 Simulation Finished 45.0
@@ -91,15 +91,15 @@ base speed: 0.5 5.0
  
 Current set: 3
 Excute Protean fleeing 16.0
-protean flight 4 5 4 6 0
+Protean flight 4 5 4 6 0
 Reached fleeing goal
 Excute Protean fleeing 32.0
-protean flight 4 3 8 9 0
+Protean flight 4 3 8 9 0
 Reached fleeing goal
-Execute proximity  62.0
+Execute Proximity  62.0
 Reached fleeing goal
 Excute Protean fleeing 72.0
-protean flight 4 5 12 12 0
+Protean flight 4 5 12 12 0
 Robot captured whilst fleeing 73.0
 Captured
 Simulation Finished 73.0
@@ -107,10 +107,10 @@ escape speed: 0.5 5.0
 base speed: 0.5 5.0
  
 Current set: 4
-Execute proximity  12.0
+Execute Proximity  12.0
 Reached fleeing goal
 Excute Protean fleeing 37.0
-protean flight 3 5 -3 -2 0
+Protean flight 3 5 -3 -2 0
 Robot captured whilst fleeing 52.0
 Captured
 Simulation Finished 52.0
@@ -118,11 +118,11 @@ escape speed: 0.5 5.0
 base speed: 0.5 5.0
  
 Current set: 5
-Execute proximity  15.0
+Execute Proximity  15.0
 Reached fleeing goal
-Execute proximity  24.0
+Execute Proximity  24.0
 Reached fleeing goal
-Execute proximity  41.0
+Execute Proximity  41.0
 Robot captured whilst fleeing 48.0
 Captured
 Simulation Finished 48.0
@@ -136,7 +136,7 @@ escape speed: 0.5 5.0
 base speed: 0.5 5.0
  
 Current set: 7
-Execute proximity  58.0
+Execute Proximity  58.0
 Reached fleeing goal
 Main goal accomplished
 Simulation Finished 64.0
@@ -156,11 +156,11 @@ escape speed: 0.5 5.0
 base speed: 0.5 5.0
  
 Current set: 10
-Execute proximity  37.0
+Execute Proximity  37.0
 Reached fleeing goal
-Execute proximity  47.0
+Execute Proximity  47.0
 Reached fleeing goal
-Execute proximity  57.0
+Execute Proximity  57.0
 Robot captured whilst fleeing 58.0
 Captured
 Simulation Finished 58.0
@@ -175,7 +175,7 @@ escape speed: 0.5 5.0
 base speed: 0.5 5.0
  
 Current set: 2
-Execute proximity  25.0
+Execute Proximity  25.0
 Robot captured whilst fleeing 38.0
 Captured
 Simulation Finished 38.0
@@ -189,9 +189,9 @@ escape speed: 0.5 5.0
 base speed: 0.5 5.0
  
 Current set: 4
-Execute proximity  22.0
+Execute Proximity  22.0
 Reached fleeing goal
-Execute proximity  32.0
+Execute Proximity  32.0
 Reached fleeing goal
 Main goal accomplished
 Simulation Finished 64.0
@@ -199,13 +199,13 @@ escape speed: 0.5 5.0
 base speed: 0.5 5.0
  
 Current set: 5
-Execute proximity  25.0
+Execute Proximity  25.0
 Reached fleeing goal
-Execute proximity  40.0
+Execute Proximity  40.0
 Reached fleeing goal
-Execute proximity  46.0
+Execute Proximity  46.0
 Reached fleeing goal
-Execute proximity  52.0
+Execute Proximity  52.0
 Robot captured whilst fleeing 54.0
 Captured
 Simulation Finished 54.0
@@ -214,10 +214,10 @@ base speed: 0.5 5.0
  
 Current set: 6
 Excute Protean fleeing 19.0
-protean flight 5 5 4 -5 0
+Protean flight 5 5 4 -5 0
 Reached fleeing goal
 Excute Protean fleeing 63.0
-protean flight 4 5 6 -9 0
+Protean flight 4 5 6 -9 0
 Robot captured whilst fleeing 74.0
 Captured
 Simulation Finished 74.0
@@ -243,7 +243,7 @@ escape speed: 0.5 5.0
 base speed: 0.5 5.0
  
 Current set: 10
-Execute proximity  38.0
+Execute Proximity  38.0
 Reached fleeing goal
 Main goal accomplished
 Simulation Finished 67.0
@@ -258,14 +258,14 @@ escape speed: 0.75 5.0
 base speed: 0.5 5.0
  
 Current set: 2
-Execute proximity  16.0
+Execute Proximity  16.0
 Reached fleeing goal
-Execute proximity  31.0
+Execute Proximity  31.0
 Reached fleeing goal
-Execute proximity  41.0
+Execute Proximity  41.0
 Reached fleeing goal
 Excute Protean fleeing 60.0
-protean flight 3 5 9 -6 0
+Protean flight 3 5 9 -6 0
 Robot captured whilst fleeing 72.0
 Captured
 Simulation Finished 72.0
@@ -286,17 +286,17 @@ base speed: 0.5 5.0
  
 Current set: 5
 Excute Protean fleeing 16.0
-protean flight 4 3 4 -5 0
+Protean flight 4 3 4 -5 0
 Reached fleeing goal
 Excute Protean fleeing 35.0
-protean flight 5 3 5 -7 0
+Protean flight 5 3 5 -7 0
 Reached fleeing goal
-Execute proximity  67.0
+Execute Proximity  67.0
 Reached fleeing goal
-Execute proximity  81.0
+Execute Proximity  81.0
 Robot captured whilst fleeing 84.0
 Excute Protean fleeing 84.0
-protean flight 3 5 4 -13 0
+Protean flight 3 5 4 -13 0
 Robot captured whilst fleeing 84.0
 Captured
 Simulation Finished 84.0
@@ -311,10 +311,10 @@ base speed: 0.5 5.0
  
 Current set: 7
 Excute Protean fleeing 19.0
-protean flight 3 3 -3 -3 0
+Protean flight 3 3 -3 -3 0
 Reached fleeing goal
 Excute Protean fleeing 28.0
-protean flight 5 5 -7 -6 0
+Protean flight 5 5 -7 -6 0
 Reached fleeing goal
 Main goal accomplished
 Simulation Finished 92.0
@@ -335,16 +335,16 @@ base speed: 0.5 5.0
  
 Current set: 10
 Excute Protean fleeing 18.0
-protean flight 3 3 -4 -7 0
+Protean flight 3 3 -4 -7 0
 Reached fleeing goal
 Excute Protean fleeing 37.0
-protean flight 4 4 -4 -10 0
+Protean flight 4 4 -4 -10 0
 Reached fleeing goal
-Execute proximity  69.0
+Execute Proximity  69.0
 Reached fleeing goal
-Execute proximity  81.0
+Execute Proximity  81.0
 Reached fleeing goal
-Execute proximity  86.0
+Execute Proximity  86.0
 Reached fleeing goal
 Robot captured whilst navigating to main goal
 Captured
@@ -352,7 +352,7 @@ Simulation Finished 114.0
 escape speed: 0.75 5.0
 base speed: 0.5 5.0
  
-~~~ SECOND RUN ROBOT AND DRONE SAME BY ESCAPE SPEED INCREASE BY 100% ~~~
+~~~ SECOND RUN ROBOT AND DRONE SAME SPEED BUT ESCAPE SPEED INCREASE BY 100% ~~~
 Current set: 1
 Main goal accomplished
 Simulation Finished 51.0
@@ -360,14 +360,14 @@ escape speed: 1.0 5.0
 base speed: 0.5 5.0
  
 Current set: 2
-Execute proximity  21.0
+Execute Proximity  21.0
 Reached fleeing goal
-Execute proximity  29.0
+Execute Proximity  29.0
 Reached fleeing goal
-Execute proximity  53.0
+Execute Proximity  53.0
 Robot captured whilst fleeing 69.0
 Excute Protean fleeing 69.0
-protean flight 3 5 1 2 0
+Protean flight 3 5 1 2 0
 Robot captured whilst fleeing 69.0
 Captured
 Simulation Finished 69.0
@@ -388,22 +388,22 @@ base speed: 0.5 5.0
  
 Current set: 5
 Excute Protean fleeing 10.0
-protean flight 4 4 4 -7 0
+Protean flight 4 4 4 -7 0
 Reached fleeing goal
 Excute Protean fleeing 23.0
-protean flight 3 4 7 -10 0
+Protean flight 3 4 7 -10 0
 Reached fleeing goal
 Excute Protean fleeing 35.0
-protean flight 5 4 5 -13 0
+Protean flight 5 4 5 -13 0
 Reached fleeing goal
-Execute proximity  71.0
+Execute Proximity  71.0
 Reached fleeing goal
-Execute proximity  80.0
+Execute Proximity  80.0
 Reached fleeing goal
-Execute proximity  87.0
+Execute Proximity  87.0
 Reached fleeing goal
 Excute Protean fleeing 107.0
-protean flight 4 5 6 -15 0
+Protean flight 4 5 6 -15 0
 Robot captured whilst fleeing 118.0
 Captured
 Simulation Finished 118.0
@@ -412,22 +412,22 @@ base speed: 0.5 5.0
  
 Current set: 6
 Excute Protean fleeing 18.0
-protean flight 3 5 3 4 0
+Protean flight 3 5 3 4 0
 Reached fleeing goal
 Excute Protean fleeing 28.0
-protean flight 4 4 6 4 0
+Protean flight 4 4 6 4 0
 Reached fleeing goal
 Excute Protean fleeing 37.0
-protean flight 5 4 10 6 0
+Protean flight 5 4 10 6 0
 Reached fleeing goal
-Execute proximity  79.0
+Execute Proximity  79.0
 Reached fleeing goal
-Execute proximity  96.0
+Execute Proximity  96.0
 Reached fleeing goal
-Execute proximity  102.0
+Execute Proximity  102.0
 Reached fleeing goal
 Excute Protean fleeing 120.0
-protean flight 5 3 6 11 0
+Protean flight 5 3 6 11 0
 Robot captured whilst fleeing 130.0
 Captured
 Simulation Finished 130.0
@@ -436,18 +436,18 @@ base speed: 0.5 5.0
  
 Current set: 7
 Excute Protean fleeing 21.0
-protean flight 4 5 4 -10 0
+Protean flight 4 5 4 -10 0
 Reached fleeing goal
 Excute Protean fleeing 42.0
-protean flight 3 4 6 -11 0
+Protean flight 3 4 6 -11 0
 Reached fleeing goal
-Execute proximity  76.0
+Execute Proximity  76.0
 Reached fleeing goal
-Execute proximity  93.0
+Execute Proximity  93.0
 Reached fleeing goal
-Execute proximity  110.0
+Execute Proximity  110.0
 Reached fleeing goal
-Execute proximity  116.0
+Execute Proximity  116.0
 Reached fleeing goal
 Simulation time is up
 Simulation Finished 181.0
@@ -455,13 +455,13 @@ escape speed: 1.0 5.0
 base speed: 0.5 5.0
  
 Current set: 8
-Execute proximity  22.0
+Execute Proximity  22.0
 Reached fleeing goal
-Execute proximity  40.0
+Execute Proximity  40.0
 Reached fleeing goal
-Execute proximity  43.0
+Execute Proximity  43.0
 Reached fleeing goal
-Execute proximity  50.0
+Execute Proximity  50.0
 Reached fleeing goal
 Main goal accomplished
 Simulation Finished 119.0
@@ -473,7 +473,6 @@ Main goal accomplished
 Simulation Finished 62.0
 escape speed: 1.0 5.0
 base speed: 0.5 5.0
-
  
 Current set: 10
 Main goal accomplished

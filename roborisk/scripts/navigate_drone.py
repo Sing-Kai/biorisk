@@ -137,18 +137,18 @@ def pursuit():
 
 			elif relative_angle < yaw:
 				cmd.angular.z = angularSpeed * (-0.2)
-				#cmd.linear.x = 0.5
+				cmd.linear.x = 0.3
 
 			elif relative_angle > yaw:
 				cmd.angular.z = angularSpeed * (0.2)
-				#cmd.linear.x = 0.5		
+				cmd.linear.x = 0.3		
 
 			elif -(relative_angle) > -(yaw):
 				cmd.angular.z = angularSpeed * (-0.2)
-				#cmd.linear.x = 0.5			
+				cmd.linear.x = 0.3			
 			else:
-				#cmd.angular.z -= angularSpeed
 				cmd.angular.z = angularSpeed * (-0.2)
+				cmd.linear.x = 0.3
 
 		#print robot_qz, drone_qz, relative_angle, d_r
 
@@ -157,7 +157,6 @@ def pursuit():
 if __name__ == '__main__':
 
 	try:
-		#print "test1"
 		pursuit()
 	except rospy.ROSInterruptException:
 		pass

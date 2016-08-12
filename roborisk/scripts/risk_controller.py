@@ -12,7 +12,7 @@ speed_risk = 0.0
 
 max_sound = 8.0
 max_distance = 14.0
-max_speed = 1.0
+max_speed = 4.0
 max_battery = 100.0
 
 def get_sound_risk(data):
@@ -65,14 +65,21 @@ def riskController():
 		#percentage_battery = get_percentage(0.0, max_battery)
 
 		#print round(sound_risk), round(distance_risk), battery_life, speed_risk
+
+		sound_weighting = 0.25
+		distance_weighting = 0.25
+		battery_weighting = 0.25
+		speed_weighting = 0.25
+
 		
-		total_risk = percentage_sound + percentage_distance + percentage_battery + percentage_speed
+		total_risk = (percentage_sound * sound_weighting) + (percentage_distance * distance_weighting) + (percentage_battery * battery_weighting) + (percentage_speed * sound_weighting)
 
 		#convert total risk into a overall percentage
-		total_risk = (total_risk/4.0) * 100
+		total_risk = total_risk * 100
 
-		print round(percentage_sound, 2), round(percentage_distance, 2), round(percentage_battery, 2), round(percentage_speed, 2), round(total_risk, 2)
+		print round(percentage_sound, 2), round(percentage_distance, 2), round(percentage_battery, 2), round(percentage_speed, 2), round(total_risk, 2), round(speed_risk, 2)
 
+		#print round(percentage_speed, 1)
 		pub.publish(total_risk)
 
 if __name__ == '__main__':

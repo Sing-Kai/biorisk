@@ -73,20 +73,20 @@ def findDistance():
 
 	while not rospy.is_shutdown():
 
-		getState = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
-		droneState = getState(model_name="quadrotor")
-		robotState = getState(model_name="jackal")
+		#getState = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
+		#droneState = getState(model_name="quadrotor")
+		#robotState = getState(model_name="jackal")
 
-		# robot coordinates and orientatoin in gazebo
-		robot_z = robotState.pose.position.z
-		robot_x = robotState.pose.position.x
-		robot_y = robotState.pose.position.y
-		robot_oz = robotState.pose.orientation.z           
-		
-		# drone coordinates and orientatoin in gazebo
-		drone_x = droneState.pose.position.x
-		drone_y = droneState.pose.position.y
-		drone_z = droneState.pose.position.z
+		## robot coordinates and orientatoin in gazebo
+		#robot_z = robotState.pose.position.z
+		#robot_x = robotState.pose.position.x
+		#robot_y = robotState.pose.position.y
+		#robot_oz = robotState.pose.orientation.z           
+		#
+		## drone coordinates and orientatoin in gazebo
+		#drone_x = droneState.pose.position.x
+		#drone_y = droneState.pose.position.y
+		#drone_z = droneState.pose.position.z
 
 		dx = drone_x - robot_x
 		dy = drone_y - robot_y
@@ -94,15 +94,17 @@ def findDistance():
 		robot_range = findRange(dx, dy)
 		now = rospy.Time.now()
 
-		five_seconds = rospy.Duration(5)
-		count_to_five = now + five_seconds
+		total_seconds = rospy.Duration(1)
+		count_to_five = now + total_seconds
 
+		print "out of range", robot_range
 		while robot_range < 1.0:
 			timer = rospy.Time.now()
 			dx = drone_x - robot_x
 			dy = drone_y - robot_y
 			robot_range = findRange(dx, dy)
 
+			print "in robot_range", robot_range
 			if count_to_five <= timer:
 				
 				capture_signal = True
@@ -118,14 +120,14 @@ def findDistance():
 if __name__ == '__main__':
 
 	# subcribe to drone position 
-	#rospy.Subscriber('drone_position_x', Float64, get_drone_x)
-	#rospy.Subscriber('drone_position_y', Float64, get_drone_y)
-	#rospy.Subscriber('drone_position_z', Float64, get_drone_z)	
+	rospy.Subscriber('drone_position_x', Float64, get_drone_x)
+	rospy.Subscriber('drone_position_y', Float64, get_drone_y)
+	rospy.Subscriber('drone_position_z', Float64, get_drone_z)	
 
 	# subcribe to robot position 
-	#rospy.Subscriber('robot_position_x', Float64, get_robot_x)		
-	#rospy.Subscriber('robot_position_y', Float64, get_robot_y)
-	#rospy.Subscriber('robot_position_z', Float64, get_robot_z)
+	rospy.Subscriber('robot_position_x', Float64, get_robot_x)		
+	rospy.Subscriber('robot_position_y', Float64, get_robot_y)
+	rospy.Subscriber('robot_position_z', Float64, get_robot_z)
 
 	try:
 		findDistance()

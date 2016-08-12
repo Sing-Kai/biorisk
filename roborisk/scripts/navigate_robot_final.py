@@ -9,41 +9,57 @@ from std_msgs.msg import Float64, Bool
 from gazebo_msgs.srv import GetModelState
 
 #set_number = 1
-#main_goal_x, main_goal_y = 9.2, 3.3
+#main_goal_x, main_goal_y = 1.6, 3.8
 
 #set_number = 2
-#main_goal_x, main_goal_y = -4.8, 2.7
+#main_goal_x, main_goal_y = 0.9, -2.5
 
 #set_number = 3
-#main_goal_x, main_goal_y =  6.4, 5.2
+#main_goal_x, main_goal_y =  0.5, 3.9
 
 #set_number = 4
-#main_goal_x, main_goal_y = 3.0, 7.8
+#main_goal_x, main_goal_y = 2.3, 0.5
 
 #set_number = 5
-#main_goal_x, main_goal_y = -5.8, -4.9
+#main_goal_x, main_goal_y = -1.0, 2.5
 
 #set_number = 6
-#main_goal_x, main_goal_y = 3.5, 3.4
+#main_goal_x, main_goal_y = -0.0, 2.2
 
 #set_number = 7
-#main_goal_x, main_goal_y = -9.2, -1.0
+#main_goal_x, main_goal_y = 2.1, -7.6
 
 #set_number = 8
-#main_goal_x, main_goal_y = -8.3, 5.0
+#main_goal_x, main_goal_y = -7.9, -4.3
 
 #set_number = 9
-#main_goal_x, main_goal_y = -9.8, -2.5
+#main_goal_x, main_goal_y = 9.6, -5.5
 
-set_number = 10
-main_goal_x, main_goal_y = 0.5, 3.9
+#set_number = 10
+#main_goal_x, main_goal_y = -1.8, 7.5
 
-max_time =180
+#set_number = 11
+#main_goal_x, main_goal_y = 4.7, 7.4 
 
-escape_angularSpeed = 5.0
+#set_number = 12
+#main_goal_x, main_goal_y = 0.6, 4.2 
+
+#set_number = 13
+#main_goal_x, main_goal_y = 4.7, -4.1
+
+#set_number = 14
+#main_goal_x, main_goal_y = 3.9, 7.1	
+
+set_number = 15
+main_goal_x, main_goal_y = 2.6, -5.4
+
+
+max_time = 180
+
+escape_angularSpeed = 7.5
 escape_linearSpeed = 1.0
 
-goal_angularSpeed = 5.0
+goal_angularSpeed = 7.5
 goal_linearSpeed = 0.5
 
 robot_orientation = 0.0
@@ -58,13 +74,21 @@ capture_signal = False
 sim_time = 0.0
 total_risk = 0.0
 
+relative_distance = 0.0
+
+proximity_para_x = 3
+proximity_para_y = 3
+
+flight_count = 0
+
 # log details of experiment
 def printSimulationDetails():
 
 	global escape_linearSpeed, escape_angularSpeed, sim_time
-	global goal_linearSpeed, goal_angularSpeed
+	global goal_linearSpeed, goal_angularSpeed, relative_distance
 
 	print "Simulation Finished", sim_time
+	print "Final Relative Distance", relative_distance
 	print "escape speed:", escape_linearSpeed, escape_angularSpeed
 	print "base speed:", goal_linearSpeed, goal_angularSpeed
 	print " "
@@ -98,6 +122,11 @@ def get_robot_y(data):
 	global robot_y
 	robot_y = data.data	
 
+def get_relative_distance(data):
+
+	global relative_distance
+	relative_distance = data.data
+
 def get_robot_orientation(data):
 	
 	global robot_orientation
@@ -106,7 +135,6 @@ def get_robot_orientation(data):
 def get_sim_time(data):
 
 	global sim_time
-
 	sim_time = data.data
 
 def get_distance(data):
@@ -195,7 +223,7 @@ def proteanGoal():
 
 		subgoalx, subgoaly = directionGoal(randx, randy)
 
-		print "protean flight", randx, randy, subgoalx, subgoaly, i
+		print "Protean flight", randx, randy, subgoalx, subgoaly, i
 		proximity_goal(subgoalx, subgoaly)
 
 #selects x or y axises for fleeing
@@ -290,6 +318,7 @@ def checkMainGoal():
 		return True
 
 	return False	
+
 def stopNav():
 
 	return 0.0, 0.0
@@ -392,7 +421,7 @@ def proximity_goal(goal_x, goal_y):
 	rate = rospy.Rate(10.0)
 	keepLoop = True
 
-	global escape_angularSpeed, escape_linearSpeed
+	global escape_angularSpeed, escape_linearSpeed, flight_count
 
 	angularSpeed = escape_angularSpeed
 	linearSpeed = escape_linearSpeed
@@ -441,6 +470,7 @@ def proximity_goal(goal_x, goal_y):
 			print "Reached fleeing goal"
 			angularSpeed, linearSpeed = stopNav()
 			keepLoop = False
+			flight_count += 1
 		
 		# edge case when relative again is 180 or -180
 		if angle_difference <= -300 or 300 <= angle_difference:
@@ -468,6 +498,17 @@ def proximity_goal(goal_x, goal_y):
 	
 		pub.publish(cmd)
 
+# checks how many times robot has flight response, once reached a threshold permantly increase base speed
+def flight_counter():
+
+	global flight_count, goal_linearSpeed
+
+	if 2 <= flight_count:
+
+		goal_linearSpeed = 1.0
+
+
+	#print flight_count, goal_linearSpeed
 
 def checkTime():
 
@@ -480,7 +521,7 @@ def checkTime():
 
 def mainGoal():
 
-	global main_goal_x, main_goal_y
+	global main_goal_x, main_goal_y, relative_distance, set_number
 
 	print "Current set:", set_number
 
@@ -489,24 +530,26 @@ def mainGoal():
 	while not stop:
 
 		stop = checkTime()
-
+		
+		flight_counter()
 		subgoalx, subgoaly = main_goal_x, main_goal_y
 		navigate_goal(subgoalx, subgoaly)
 
 		# testing proximity		
-		if 15 <= total_risk <= 30:
+		if 15 <= total_risk <= 20:
 				
-			subgoalx, subgoaly = directionGoal(2, 2)
-			print "Execute proximity ", sim_time
+			subgoalx, subgoaly = directionGoal(proximity_para_x, proximity_para_y)
+			print "Execute Proximity ", sim_time
+			print "Initiated Proximity Distance", relative_distance
 			proximity_goal(subgoalx, subgoaly)
 
 		# testing protean fleeing
-		if 30 < total_risk < 100:
+		if 20 < total_risk < 100:
 			print "Excute Protean fleeing", sim_time
+			print "Initiated Protean Distance", relative_distance
 			proteanGoal()
 
 		stop = checkMainGoal()
-
 
 if __name__ == '__main__':
 
@@ -521,6 +564,7 @@ if __name__ == '__main__':
 	rospy.Subscriber('sim_time', Float64, get_sim_time)
 	rospy.Subscriber('capture_signal', Bool, callback_capture)
 	rospy.Subscriber('total_risk', Float64, get_risk)
+	rospy.Subscriber('relative_distance', Float64, get_relative_distance)
 	
 	try:
 

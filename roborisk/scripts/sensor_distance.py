@@ -8,7 +8,7 @@ from std_msgs.msg import Float64
 relative_distance = 0.0
 distnace_score = 0.0
 list_d = []
-
+total_length = 5
 
 def get_distance_data(data):
 
@@ -18,11 +18,12 @@ def get_distance_data(data):
 
 def populate_list(list_d, distnace_score):
 
+	global total_length
 	list_length = len(list_d)
 
 	new_list = []
 
-	if list_length < 5:
+	if list_length < total_length:
 
 		append_list(list_d, distnace_score)
 
@@ -144,6 +145,8 @@ def distanceSensor():
 
 	rate = rospy.Rate(5.0)
 
+	global total_length
+
 	final_list = []
 	intial_seconds = 0
 	distnace_score = 0.0
@@ -163,7 +166,7 @@ def distanceSensor():
 		intial_seconds = check_seconds(seconds, intial_seconds, distnace_score)
 		
 		# once 5 samples have been taken the analyse the slope of data to see if this is increase or decreasing
-		if len(list_d) == 5:
+		if len(list_d) == total_length:
 			distance_risk = find_slope(list_d)
 			#print round(distance_risk) #, list_d
 

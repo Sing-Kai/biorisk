@@ -8,6 +8,7 @@ from std_msgs.msg import Float64
 relative_distance = 0.0
 speed = 0.0
 list_d = []
+total_length = 5
 
 def get_distance_data(data):
 
@@ -17,11 +18,12 @@ def get_distance_data(data):
 
 def populate_list(list_d, speed):
 
+	global total_length
 	list_length = len(list_d)
 
 	new_list = []
 
-	if list_length < 5:
+	if list_length < total_length:
 
 		append_list(list_d, speed)
 
@@ -137,6 +139,7 @@ def speedSensor():
 	rospy.init_node('speed_sensor')
 
 	rate = rospy.Rate(5.0)
+	global total_length
 
 	final_list = []
 	intial_seconds = 0
@@ -160,7 +163,7 @@ def speedSensor():
 		intial_seconds = check_seconds(current_seconds, intial_seconds, speed)
 		
 		# once 5 samples have been taken the analyse the slope of data to see if this is increase or decreasing
-		if len(list_d) == 5:
+		if len(list_d) == total_length:
 			speed_risk = find_slope(list_d)
 			#print speed_risk #list_d, 
 

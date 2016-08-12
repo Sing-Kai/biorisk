@@ -7,7 +7,7 @@ from std_msgs.msg import Float64
 
 sound_pressure = 0.0
 list_s = []
-
+total_length = 5
 
 def get_sound_data(data):
 
@@ -19,9 +19,11 @@ def populate_list(list_s, sound_pressure):
 
 	list_length = len(list_s)
 
+	global total_length
+
 	new_list = []
 
-	if list_length < 5:
+	if list_length < total_length:
 
 		append_list(list_s, sound_pressure)
 
@@ -151,11 +153,12 @@ def soundSensor():
 
 	rate = rospy.Rate(5.0)
 
+	global total_length
+
 	#list_s = []
 	final_list = []
 	intial_seconds = 0
 
-	#find_slope()
 
 	while not rospy.is_shutdown():
 
@@ -166,14 +169,13 @@ def soundSensor():
 
 		#find_slope(list_s)
 		
-		if len(list_s) == 5:
+		if len(list_s) == total_length:
 			sound_risk = find_slope(list_s)
 
 			#print sound_risk , list_s
 
 			pub.publish(sound_risk)
 			rospy.sleep(1.0)
-		#rospy.sleep(2.0)
 
 			del list_s[:]
 			#print "list is empty", list_s
