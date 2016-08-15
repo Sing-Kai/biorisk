@@ -8,8 +8,8 @@ import random
 from std_msgs.msg import Float64, Bool
 from gazebo_msgs.srv import GetModelState
 
-#set_number = 1
-#main_goal_x, main_goal_y = 1.6, 3.8
+set_number = 1
+main_goal_x, main_goal_y = 1.6, 3.8
 
 #set_number = 2
 #main_goal_x, main_goal_y = 0.9, -2.5
@@ -50,8 +50,8 @@ from gazebo_msgs.srv import GetModelState
 #set_number = 14
 #main_goal_x, main_goal_y = 3.9, 7.1	
 
-set_number = 15
-main_goal_x, main_goal_y = 2.6, -5.4
+#set_number = 15
+#main_goal_x, main_goal_y = 2.6, -5.4
 
 
 max_time = 180
@@ -416,6 +416,9 @@ def navigate_goal(goal_x, goal_y):
 		#cmd = nav_direction(cmd, relative_angle, yaw, angle_difference)	
 		pub.publish(cmd)
 
+
+
+
 def proximity_goal(goal_x, goal_y):
 
 	rate = rospy.Rate(10.0)
@@ -515,6 +518,7 @@ def checkTime():
 	global sim_time, max_time
 
 	if sim_time <= max_time:	
+		
 		return True
 	#print "time is up"
 	return False		
