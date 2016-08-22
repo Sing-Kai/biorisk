@@ -5,7 +5,7 @@ import math
 import tf
 import geometry_msgs.msg
 
-from std_msgs.msg import Float64
+from std_msgs.msg import Float64, Bool
 from gazebo_msgs.srv import GetModelState
 
 
@@ -19,6 +19,7 @@ drone_orientation = 0.0
 robot_x = 0.0
 robot_y = 0.0
 robot_z = 0.0
+quit = False
 
 def get_drone_z(data):
 
@@ -55,6 +56,10 @@ def get_drone_orientation(data):
 	global drone_orientation
 	drone_orientation = data.data
 
+def drone_quit(data):
+
+	global quit
+	quit = data.data
 
 def pursuit():
 
@@ -72,6 +77,8 @@ def pursuit():
 	rospy.Subscriber('robot_position_y', Float64, get_robot_y)
 	rospy.Subscriber('robot_position_z', Float64, get_robot_z)
 
+	# subscribe to quit signal
+	rospy.Subscriber('quit_signal', Bool, drone_quit)
 	height_speed_z = 1
 
 	rate = rospy.Rate(10.0)
@@ -85,7 +92,6 @@ def pursuit():
 
 		relative_x2 = drone_x - robot_x
 		relative_y2 = drone_y - robot_y
-
 
 		relative_angle = math.atan2(relative_y, relative_x)
 		quaternion = tf.transformations.quaternion_from_euler(0, 0, relative_angle)
@@ -105,18 +111,17 @@ def pursuit():
 		relative_angle = relative_angle * (180.0/math.pi)
 		angle_difference = relative_angle - yaw
 	
-		#print round(yaw), round(relative_angle), round(angle_difference)
-
-		#angular = math.atan2(relative_y, relative_x)
-
-		#linear = math.sqrt(relative_x ** 2 + relative_y ** 2) # Distance from Robot
-
-		#drone_angle = math.atan2(drone_y, drone_x) * (180.0/math.pi)
-
 		cmd = geometry_msgs.msg.Twist()
 		cmd.linear.z = height_speed_z * 0.5				
-		angularSpeed = 2.0
+		angularSpeed = 0.4
 		linearSpeed = 0.5
+		linearRotationSpeed = 0.3
+
+		if quit:
+			angularSpeed = 0.0
+			linearSpeed = 0.0
+			linearRotationSpeed = 0.0
+			print quit
 
 		# limit drone height
 		if round(drone_z) == 2:
@@ -136,19 +141,19 @@ def pursuit():
 				cmd.linear.x = linearSpeed
 
 			elif relative_angle < yaw:
-				cmd.angular.z = angularSpeed * (-0.2)
-				cmd.linear.x = 0.3
+				cmd.angular.z = angularSpeed * (-1.0)
+				cmd.linear.x = linearRotationSpeed
 
 			elif relative_angle > yaw:
-				cmd.angular.z = angularSpeed * (0.2)
-				cmd.linear.x = 0.3		
+				cmd.angular.z = angularSpeed * (1.0)
+				cmd.linear.x = linearRotationSpeed		
 
 			elif -(relative_angle) > -(yaw):
-				cmd.angular.z = angularSpeed * (-0.2)
-				cmd.linear.x = 0.3			
+				cmd.angular.z = angularSpeed * (-1.0)
+				cmd.linear.x = linearRotationSpeed			
 			else:
-				cmd.angular.z = angularSpeed * (-0.2)
-				cmd.linear.x = 0.3
+				cmd.angular.z = angularSpeed * (-1.0)
+				cmd.linear.x = linearRotationSpeed
 
 		#print robot_qz, drone_qz, relative_angle, d_r
 

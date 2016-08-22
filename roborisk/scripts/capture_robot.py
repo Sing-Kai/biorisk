@@ -65,28 +65,17 @@ def findDistance():
 
 	rospy.init_node('capture_robot')
 	capture = rospy.Publisher('capture_signal',Bool, queue_size = 1)
+	quit = rospy.Publisher('quit_signal',Bool, queue_size = 1)
 	rate = rospy.Rate(5.0)
 
 	capture_signal = False
-	
+	capture_attempt = False
+	robot_escape = False
+	first_attempt = False
+	second_attempt = False
 	#rospy.sleep(5)
 
 	while not rospy.is_shutdown():
-
-		#getState = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
-		#droneState = getState(model_name="quadrotor")
-		#robotState = getState(model_name="jackal")
-
-		## robot coordinates and orientatoin in gazebo
-		#robot_z = robotState.pose.position.z
-		#robot_x = robotState.pose.position.x
-		#robot_y = robotState.pose.position.y
-		#robot_oz = robotState.pose.orientation.z           
-		#
-		## drone coordinates and orientatoin in gazebo
-		#drone_x = droneState.pose.position.x
-		#drone_y = droneState.pose.position.y
-		#drone_z = droneState.pose.position.z
 
 		dx = drone_x - robot_x
 		dy = drone_y - robot_y
@@ -97,19 +86,37 @@ def findDistance():
 		total_seconds = rospy.Duration(1)
 		count_to_five = now + total_seconds
 
-		print "out of range", robot_range
+		# initialize attempt to capture
+		if robot_range < 3.0:
+			capture_attempt = True
+			#print "Attempting to capture", robot_range, capture_attempt
+
+		# if robot escapes range then stop drone navigation
+		if capture_attempt and robot_range >= 3.0:
+			first_attempt = True
+			quit.publish(first_attempt)
+			#print "first attempt", first_attempt
+
+#		if first_attempt and robot_range < 3.0:
+#			second_attempt = True
+#			print "second attempt", second_attempt
+
+#		if second_attempt and robot_range >= 3.0:
+#			quit.publish(second_attempt)
+#			print "drone fialed second time"
+
 		while robot_range < 1.0:
 			timer = rospy.Time.now()
 			dx = drone_x - robot_x
 			dy = drone_y - robot_y
 			robot_range = findRange(dx, dy)
 
-			print "in robot_range", robot_range
+			#print "in robot_range", robot_range
 			if count_to_five <= timer:
 				
 				capture_signal = True
 				capture.publish(capture_signal)
-				print "Successful capture", capture_signal
+				#print "Successful capture", capture_signal
 									
 			#print now.secs, timer.secs, count_to_three.secs
 			capture_signal = False

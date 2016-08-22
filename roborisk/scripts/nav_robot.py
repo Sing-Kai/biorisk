@@ -9,8 +9,8 @@ from std_msgs.msg import Float64, Bool
 from gazebo_msgs.srv import GetModelState
 from geometry_msgs.msg import Twist, Vector3
 
-set_number = 1
-main_goal_x, main_goal_y = 1.6, 3.8
+#set_number = 1
+#main_goal_x, main_goal_y = 1.6, 3.8
 
 #set_number = 2
 #main_goal_x, main_goal_y = 0.9, -2.5
@@ -48,19 +48,18 @@ main_goal_x, main_goal_y = 1.6, 3.8
 #set_number = 13
 #main_goal_x, main_goal_y = 4.7, -4.1
 
-#set_number = 14
-#main_goal_x, main_goal_y = 3.9, 7.1	
+set_number = 14
+main_goal_x, main_goal_y = 3.9, 7.1	
 
 #set_number = 15
 #main_goal_x, main_goal_y = 2.6, -5.4
 
-
 max_time = 180
 
-escape_angularSpeed = 1.5
+escape_angularSpeed = 1.0
 escape_linearSpeed = 1.0
 
-goal_angularSpeed = 1.5
+goal_angularSpeed = 1.0
 goal_linearSpeed = 0.5
 
 robot_orientation = 0.0
@@ -350,12 +349,12 @@ def moveuntilreached(x,y):
 			keepLoop = False		
 
 		# risk test this must match parameters in the mainGoal() function
-		if 14.9 < total_risk :
+		if 9.9 < total_risk :
 			pub.publish(Vector3(0.0,0.0,0.0),Vector3(0.0,0.0,0.0))
 			keepLoop = False
 		#Correct angle
 		while abs(math.atan2(y - data.pose.position.y,x - data.pose.position.x) - phi) > 0.1 : 
-
+			
 			if math.atan2(y - data.pose.position.y,x - data.pose.position.x)  > 0 and phi > 0:
 				if math.atan2(y - data.pose.position.y,x - data.pose.position.x) > phi:
 					pub.publish(Vector3(0.0,0.0,0.0),Vector3(0.0,0.0,angularSpeed))
@@ -425,7 +424,7 @@ def proximity_goal(x, y):
 			keepLoop = False		
 
 		#Correct angle
-		while abs(math.atan2(y - data.pose.position.y,x - data.pose.position.x) - phi) > 0.1 : 
+		while round(abs(math.atan2(y - data.pose.position.y,x - data.pose.position.x) - phi),1) > 0.2 : 
 
 			if math.atan2(y - data.pose.position.y,x - data.pose.position.x)  > 0 and phi > 0:
 				if math.atan2(y - data.pose.position.y,x - data.pose.position.x) > phi:
@@ -473,7 +472,6 @@ def proximity_goal(x, y):
 		data = getmodel('jackal','')
 
 	
-
 # checks how many times robot has flight response, once reached a threshold permantly increase base speed
 def flight_counter():
 
@@ -509,7 +507,7 @@ def mainGoal():
 		moveuntilreached(subgoalx, subgoaly)
 
 		# testing proximity		
-		if 15 <= total_risk <= 20:
+		if 10 <= total_risk <= 20:
 				
 			subgoalx, subgoaly = directionGoal(proximity_para_x, proximity_para_y)
 			print "Execute Proximity ", sim_time

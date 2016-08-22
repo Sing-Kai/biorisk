@@ -26,7 +26,7 @@ drone_goal_distance = 0.0
 
 # test below list
 # set 1
-random.seed(41) #  robot: -2.4 -5.4  drone: -6.7 8.3  goal: 1.6 3.8  robot to goal: 10.0  robot to drone: 14.0 drone to goal: 9.0
+#random.seed(41) #  robot: -2.4 -5.4  drone: -6.7 8.3  goal: 1.6 3.8  robot to goal: 10.0  robot to drone: 14.0 drone to goal: 9.0
 
 # set 2
 #random.seed(72) #  robot: -8.5 1.9  drone: 9.8 -3.1  goal: 0.9 -2.5  robot to goal: 10.0  robot to drone: 19.0 drone to goal: 9.0
@@ -65,7 +65,7 @@ random.seed(41) #  robot: -2.4 -5.4  drone: -6.7 8.3  goal: 1.6 3.8  robot to go
 #random.seed(416) #  robot: -4.9 -9.8  drone: 1.6 3.3  goal: 4.7 -4.1  robot to goal: 11.0  robot to drone: 15.0 drone to goal: 8.0
 
 # set 14
-#random.seed(453) #  robot: -5.3 0.7  drone: 3.3 -2.3  goal: 3.9 7.1  robot to goal: 11.0  robot to drone: 9.0 drone to goal: 9.0
+random.seed(453) #  robot: -5.3 0.7  drone: 3.3 -2.3  goal: 3.9 7.1  robot to goal: 11.0  robot to drone: 9.0 drone to goal: 9.0
 
 # set 15
 #random.seed(455) #  robot: 8.1 4.5  drone: -2.4 1.3  goal: 2.6 -5.4  robot to goal: 11.0  robot to drone: 11.0 drone to goal: 8.0
