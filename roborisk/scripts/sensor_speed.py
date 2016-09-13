@@ -1,8 +1,10 @@
 #!/usr/bin/env python
+
+# simulated sensor node that subscibes to the environmental cue of speed, node takes a sample of data every 1 seconds
+
 import rospy
 import math
 import geometry_msgs.msg
-
 from std_msgs.msg import Float64
 
 relative_distance = 0.0
@@ -13,7 +15,6 @@ total_length = 5
 def get_distance_data(data):
 
 	global relative_distance
-
 	relative_distance = data.data
 
 def populate_list(list_d, speed):
@@ -24,9 +25,7 @@ def populate_list(list_d, speed):
 	new_list = []
 
 	if list_length < total_length:
-
 		append_list(list_d, speed)
-
 
 def append_list(list_d, speed):
 

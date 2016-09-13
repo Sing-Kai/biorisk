@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+
+# modified code from http://wiki.ros.org/teleop_twist_keyboard, allows for user to manually control robot in Gazebo world
+# used for testing initially
+
 import roslib; roslib.load_manifest('teleop_twist_keyboard')
 import rospy
 

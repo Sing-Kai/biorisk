@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+
+# initial version of robot navigation 
+
 import rospy
 import math
 import tf
@@ -7,51 +10,6 @@ import geometry_msgs.msg
 import random
 from std_msgs.msg import Float64, Bool
 from gazebo_msgs.srv import GetModelState
-
-set_number = 1
-main_goal_x, main_goal_y = 1.6, 3.8
-
-#set_number = 2
-#main_goal_x, main_goal_y = 0.9, -2.5
-
-#set_number = 3
-#main_goal_x, main_goal_y =  0.5, 3.9
-
-#set_number = 4
-#main_goal_x, main_goal_y = 2.3, 0.5
-
-#set_number = 5
-#main_goal_x, main_goal_y = -1.0, 2.5
-
-#set_number = 6
-#main_goal_x, main_goal_y = -0.0, 2.2
-
-#set_number = 7
-#main_goal_x, main_goal_y = 2.1, -7.6
-
-#set_number = 8
-#main_goal_x, main_goal_y = -7.9, -4.3
-
-#set_number = 9
-#main_goal_x, main_goal_y = 9.6, -5.5
-
-#set_number = 10
-#main_goal_x, main_goal_y = -1.8, 7.5
-
-#set_number = 11
-#main_goal_x, main_goal_y = 4.7, 7.4 
-
-#set_number = 12
-#main_goal_x, main_goal_y = 0.6, 4.2 
-
-#set_number = 13
-#main_goal_x, main_goal_y = 4.7, -4.1
-
-#set_number = 14
-#main_goal_x, main_goal_y = 3.9, 7.1	
-
-#set_number = 15
-#main_goal_x, main_goal_y = 2.6, -5.4
 
 
 max_time = 180

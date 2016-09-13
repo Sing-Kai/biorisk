@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+
+# node only used for testing purposes
+
 import rospy
 import math
 import time
@@ -16,6 +19,7 @@ def simulationTime():
 	timer = 0.0
 
 	stop_sim = False
+	
 	#total time for simulation
 	simulation_time = 10.0
 

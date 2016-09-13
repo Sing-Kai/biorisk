@@ -1,15 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+# Another navigational node testing auto navigation of the robot. Attempts to use the move_base navigational stack 
+# but robot behaviour was not accurate
+# Not used for the final simualtion
+
 """
-
 Snippet of code on how to send a navigation goal and how to get the current robot position in map
-
 Navigation actionserver: /move_base/goal
 Type of message: move_base_msgs/MoveBaseActionGoal
-
 Actual robot pose topic: /amcl_pose
 Type of message: geometry_msgs/PoseWithCovarianceStamped
-
 """
 
 import rospy
@@ -403,9 +404,7 @@ if __name__=='__main__':
     rospy.loginfo("Connected.")
     rospy.loginfo("Creating navigation goal...")
     #print "goal location is", goal_x, goal_y
-    
-
-    
+        
     #navigationMission(goal_x, goal_y, goal_z)
     #directionGoal()
     #randomXYaxis()

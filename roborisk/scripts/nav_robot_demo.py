@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Navigational node that contains navigating to main goal, proximity, protean fleeing and hiding
+# node only used for presentation demo
 
 import rospy
 import math
@@ -12,8 +12,9 @@ from std_msgs.msg import Float64, Bool
 from gazebo_msgs.srv import GetModelState
 from geometry_msgs.msg import Twist, Vector3
 
-#set_number = 1
-#main_goal_x, main_goal_y = 1.6, 3.8
+set_number = 1
+main_goal_x, main_goal_y = 1.6, 3.8
+
 #hide_goal_x, hide_goal_y =  1.1 , -2.3
 
 #set_number = 2
@@ -48,7 +49,7 @@ from geometry_msgs.msg import Twist, Vector3
 #main_goal_x, main_goal_y = 9.6, -5.5
 #hide_goal_x, hide_goal_y =  7.3 , -8.7
 
-#set_number = 10	
+#set_number = 10
 #main_goal_x, main_goal_y = -1.8, 7.5
 #hide_goal_x, hide_goal_y =  0.7 , -2.5
 
@@ -68,10 +69,9 @@ from geometry_msgs.msg import Twist, Vector3
 #main_goal_x, main_goal_y = 3.9, 7.1
 #hide_goal_x, hide_goal_y =  -2.5 , 1.1	
 
-set_number = 15
-main_goal_x, main_goal_y = 2.6, -5.4
+#set_number = 15
+#main_goal_x, main_goal_y = 2.6, -5.4
 #hide_goal_x, hide_goal_y =  9.3 , 9.8
-
 
 max_time = 180
 
@@ -95,9 +95,8 @@ total_risk = 0.0
 
 relative_distance = 0.0
 
-# parameter for proximity
-proximity_para_x = 4
-proximity_para_y = 4
+proximity_para_x = 2
+proximity_para_y = 2
 
 #hide_goal_x = 0.0
 #hide_goal_y = 0.0
@@ -172,14 +171,17 @@ def callback_capture(data):
    capture_signal = data.data
 
 
-# decides on the direction fleeing to ensure robot moves away from drone
+# decides on the direction and the magnitue of proximity maintenance
 def directionGoal(x, y):
+
+	#print robot_x, robot_y, drone_x, drone_y
 
 	selectAxis = 0
 
 	proximity_x = x
 	proximity_y = y
 
+	# if 0 false keep y constant and if 1 true then keey x constant
 	selectAxis = randomXYaxis()
 
 	dx = drone_x - robot_x
@@ -230,19 +232,16 @@ def directionGoal(x, y):
 		proximity_x = -(proximity_x)
 		proximity_goal_x, proximity_goal_y = proximityXY(proximity_x, proximity_y, selectAxis)
 
+	#print "these are still showing as float!", int(proximity_goal_x), int(proximity_goal_y)
 	return int(proximity_goal_x), int(proximity_goal_y)
 
 
-# generation of random protean fleeing, function det
+# random protean fleeing 
 def proteanGoal():
 
-	turn_num = 1
-	low_range = 3
-	upper_range = 5
-
-	for i in range(turn_num):
-		randx = random.randint(low_range, upper_range)
-		randy = random.randint(low_range, upper_range)
+	for i in range(2):
+		randx = random.randint(2, 3)
+		randy = random.randint(2, 3)
 
 		subgoalx, subgoaly = directionGoal(randx, randy)
 
@@ -351,7 +350,7 @@ def stopNav():
 
 	return 0.0, 0.0
 
-def movetogoal(x,y):
+def moveuntilreached(x,y):
 
 	global goal_angularSpeed, goal_linearSpeed, sim_time
 
@@ -371,13 +370,12 @@ def movetogoal(x,y):
 			pub.publish(Vector3(0.0,0.0,0.0),Vector3(0.0,0.0,0.0))
 			keepLoop = False		
 
-		### stop main goal navigation before fleein
-		if 9.9 < total_risk :
+		# risk test this must match parameters in the mainGoal() function
+		if 5.9 < total_risk :
 			pub.publish(Vector3(0.0,0.0,0.0),Vector3(0.0,0.0,0.0))
 			keepLoop = False
-
 		#Correct angle
-		while abs(math.atan2(y - data.pose.position.y,x - data.pose.position.x) - phi) > 0.2 : 
+		while abs(math.atan2(y - data.pose.position.y,x - data.pose.position.x) - phi) > 0.1 : 
 			
 			if math.atan2(y - data.pose.position.y,x - data.pose.position.x)  > 0 and phi > 0:
 				if math.atan2(y - data.pose.position.y,x - data.pose.position.x) > phi:
@@ -424,8 +422,6 @@ def movetogoal(x,y):
 		getmodel = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
 		data = getmodel('jackal','')
 	
-
-
 def proximity_goal(x, y):
 
 	global escape_angularSpeed, escape_linearSpeed, sim_time, flight_count
@@ -488,78 +484,6 @@ def proximity_goal(x, y):
 			getmodel = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
 			data = getmodel('jackal','')
 			phi = math.atan2(2*(data.pose.orientation.w*data.pose.orientation.z + data.pose.orientation.x*data.pose.orientation.y), 1 - 2*(math.pow(data.pose.orientation.y,2)+math.pow(data.pose.orientation.z,2)))
-		
-		for i in range(0,1):
-			pub.publish(Vector3(linearSpeed,0.0,0.0),Vector3(0.0,0.0,0.0))
-			rospy.sleep(0.1)
-
-		getmodel = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
-		data = getmodel('jackal','')
-
-def hide(x, y):
-
-	global escape_angularSpeed, escape_linearSpeed, sim_time, flight_count
-
-	getmodel = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
-	data = getmodel('jackal','')
-	pub = rospy.Publisher('/cmd_vel', Twist, queue_size=1,latch=True)
-	phi = math.atan2(2*(data.pose.orientation.w*data.pose.orientation.z + data.pose.orientation.x*data.pose.orientation.y), 1 - 2*(math.pow(data.pose.orientation.y,2)+math.pow(data.pose.orientation.z,2)))
-	keepLoop = True
-
-	angularSpeed = escape_angularSpeed
-	linearSpeed = escape_linearSpeed
-
-	flight_count += 1
-
-	while (abs(y - data.pose.position.y) > 0.5 or abs(x - data.pose.position.x) > 0.5) and keepLoop:
-
-		if capture_signal:
-			print "Robot captured whilst fleeing", sim_time
-			pub.publish(Vector3(0.0,0.0,0.0),Vector3(0.0,0.0,0.0))
-			keepLoop = False		
-
-		hiding = rospy.Publisher('hiding', Bool, queue_size=1)
-		hiding.publish(True)
-		#Correct angle
-		while round(abs(math.atan2(y - data.pose.position.y,x - data.pose.position.x) - phi),1) > 0.2 : 
-
-			if math.atan2(y - data.pose.position.y,x - data.pose.position.x)  > 0 and phi > 0:
-				if math.atan2(y - data.pose.position.y,x - data.pose.position.x) > phi:
-					pub.publish(Vector3(0.0,0.0,0.0),Vector3(0.0,0.0,angularSpeed))
-					rospy.sleep(0.25)
-				else: 
-					pub.publish(Vector3(0.0,0.0,0.0),Vector3(0.0,0.0,-angularSpeed))
-					rospy.sleep(0.25)
-			elif math.atan2(y - data.pose.position.y,x - data.pose.position.x) < 0 and phi < 0:
-				if abs(math.atan2(y - data.pose.position.y,x - data.pose.position.x)) > abs(phi):
-					pub.publish(Vector3(0.0,0.0,0.0),Vector3(0.0,0.0,-angularSpeed))
-					rospy.sleep(0.25)
-				else:
-					pub.publish(Vector3(0.0,0.0,0.0),Vector3(0.0,0.0,angularSpeed))
-					rospy.sleep(0.25)
-			elif math.atan2(y - data.pose.position.y,x - data.pose.position.x) > 0 and phi < 0:
-				if abs(math.atan2(y - data.pose.position.y,x - data.pose.position.x)) > 1.5 and abs(phi) > 1.5:
-					pub.publish(Vector3(0.0,0.0,0.0),Vector3(0.0,0.0,-angularSpeed))
-					rospy.sleep(0.25)
-				elif abs(math.atan2(y - data.pose.position.y,x - data.pose.position.x)) < 1.5 and abs(phi) < 1.5:
-					pub.publish(Vector3(0.0,0.0,0.0),Vector3(0.0,0.0,angularSpeed))
-					rospy.sleep(0.25)
-				else:
-					pub.publish(Vector3(0.0,0.0,0.0),Vector3(0.0,0.0,angularSpeed))
-					rospy.sleep(0.25)
-			else:
-				if abs(math.atan2(y - data.pose.position.y,x - data.pose.position.x)) > 1.5 and abs(phi) > 1.5:
-					pub.publish(Vector3(0.0,0.0,0.0),Vector3(0.0,0.0,angularSpeed))
-					rospy.sleep(0.25)
-				elif abs(math.atan2(y - data.pose.position.y,x - data.pose.position.x)) < 1.5 and abs(phi) < 1.5:
-					pub.publish(Vector3(0.0,0.0,0.0),Vector3(0.0,0.0,-angularSpeed))
-					rospy.sleep(0.25)
-				else:
-					pub.publish(Vector3(0.0,0.0,0.0),Vector3(0.0,0.0,angularSpeed))
-					rospy.sleep(0.25)
-			getmodel = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
-			data = getmodel('jackal','')
-			phi = math.atan2(2*(data.pose.orientation.w*data.pose.orientation.z + data.pose.orientation.x*data.pose.orientation.y), 1 - 2*(math.pow(data.pose.orientation.y,2)+math.pow(data.pose.orientation.z,2)))
 		#Then advance for a bit
 		for i in range(0,1):
 			pub.publish(Vector3(linearSpeed,0.0,0.0),Vector3(0.0,0.0,0.0))
@@ -567,8 +491,7 @@ def hide(x, y):
 
 		getmodel = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
 		data = getmodel('jackal','')
-
-	rospy.sleep(20)	
+	
 
 # checks how many times robot has flight response, once reached a threshold permantly increase base speed
 def flight_counter():
@@ -588,7 +511,6 @@ def checkTime():
 	#print "time is up"
 	return False		
 
-# navigate to a goal but execute fleeing if risk value hits threshold
 def mainGoal():
 
 	global main_goal_x, main_goal_y, relative_distance, set_number
@@ -599,30 +521,27 @@ def mainGoal():
 
 	while not stop:
 
-		stop = checkTime()
+		#stop = checkTime()
 		
 		flight_counter()
 		subgoalx, subgoaly = main_goal_x, main_goal_y
-		movetogoal(subgoalx, subgoaly)
+		moveuntilreached(0.0, 0.0)
 
-		# risk value which determines the fleeing mechanism
-		# proximity		
-		if 15 <= total_risk <= 20:
-			subgoalx, subgoaly = directionGoal(proximity_para_x, proximity_para_y)
-			print "Execute Proximity ", sim_time
-			print "Initiated Proximity Distance", relative_distance
-			proximity_goal(subgoalx, subgoaly)
+		#test hiding:
+		# testing protean fleeing
+#		if 5 < total_risk < 10:
+#			subgoalx, subgoaly = directionGoal(proximity_para_x, proximity_para_y)
+#			print "Execute Proximity ", sim_time
+#			print "Initiated Proximity Distance", relative_distance
+#			proximity_goal(subgoalx, subgoaly)
 
-		# protean fleeing
-		if 20 < total_risk <100:
+		if 6 < total_risk:
 			print "Excute Protean fleeing", sim_time
 			print "Initiated Protean Distance", relative_distance
 			proteanGoal()
 
-#			hide(hide_goal_x, hide_goal_y)
-
 		stop = checkMainGoal()
-
+		#print stop
 
 if __name__ == '__main__':
 

@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+
+# tesing robot navigation file that modified via the modifying the teleop_twist_keyboard
+
 import roslib; roslib.load_manifest('teleop_twist_keyboard')
 import rospy
 import math

@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 
-"""
-This script has tracks the locatons of the robots and drone within gazebo and hand drone_location. 
-Created by Sing-Kai Chiu, July 2016.
-"""
+#This script  tracks the locatons of the robots and drone within gazebo and hand drone_location. 
+#Created by Sing-Kai Chiu, July 2016.
+
 
 import rospy
 import math
@@ -21,11 +20,14 @@ def gtracker():
 
    rospy.init_node('get_drone_location')
 
+   # gets drone postion in gazebo world
    drone_position_x = rospy.Publisher('drone_position_x', Float64, queue_size=0)
    drone_position_z = rospy.Publisher('drone_position_z', Float64, queue_size=0)
    drone_position_y = rospy.Publisher('drone_position_y', Float64, queue_size=0)
    drone_orientation_z = rospy.Publisher('drone_orientation', Float64, queue_size=0)
 
+
+   # gets robot postion in gazebo world
    robot_position_x = rospy.Publisher('robot_position_x', Float64, queue_size=0)
    robot_position_z = rospy.Publisher('robot_position_z', Float64, queue_size=0)
    robot_position_y = rospy.Publisher('robot_position_y', Float64, queue_size=0)
@@ -64,7 +66,6 @@ def gtracker():
       drone_position_x.publish(drone_x)
       drone_orientation_z.publish(drone_oz)
 
-      #
       #print robot_x, robot_y, drone_x, drone_y
       #print robotState.pose.position.x, robotState.pose.position.y
       rate.sleep()

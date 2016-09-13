@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+
+# simulated sensor node that subscibes to the environmental cue of sound, node takes a sample of data every 1 seconds
+
 import rospy
 import math
 import geometry_msgs.msg
@@ -44,8 +47,6 @@ def check_seconds(sec, old_sec, sound_pressure):
 def find_slope(list_temp):
 	
 	ylist = list(list_s)
-	#ylist = [2, 4, 5, 4, 5]
-	#print ylist
 
 	slope = 0.0
 	sum_square_x_final = 0
@@ -110,9 +111,7 @@ def find_mean(temp_list):
 def value_minus_mean(temp_list, mean):
 
 	d_list = []
-
 	d_list = temp_list
-
 	d_list[:] = [x - mean for x in d_list]
 
 	return d_list
@@ -164,29 +163,20 @@ def soundSensor():
 
 		f_time = rospy.get_time()
 		seconds = round(f_time)
-		#intial_seconds = 0
 		intial_seconds = check_seconds(seconds, intial_seconds, sound_pressure)
-
-		#find_slope(list_s)
 		
 		if len(list_s) == total_length:
 			sound_risk = find_slope(list_s)
-
-			#print sound_risk , list_s
 
 			pub.publish(sound_risk)
 			rospy.sleep(1.0)
 
 			del list_s[:]
 			#print "list is empty", list_s
-		
 
-		#pub.publish(sound_pressure)
 
 
 if __name__ == '__main__':
-
-	
 
 	try:
 		soundSensor()

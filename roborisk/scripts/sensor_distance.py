@@ -1,8 +1,10 @@
 #!/usr/bin/env python
+
+# simulated sensor node that subscibes to the environmental cue of distance, node takes a sample of data every 1 seconds
+
 import rospy
 import math
 import geometry_msgs.msg
-
 from std_msgs.msg import Float64
 
 relative_distance = 0.0
@@ -31,7 +33,7 @@ def append_list(list_d, distnace_score):
 
 	list_d.append(distnace_score)	
 
-#
+
 def check_seconds(sec, old_sec, distnace_score):
 
 	if sec > old_sec:		
@@ -40,6 +42,7 @@ def check_seconds(sec, old_sec, distnace_score):
 
 	return sec
 
+# finds the slope of the sampled data
 def find_slope(list_temp):
 	
 	ylist = list(list_d)
@@ -138,6 +141,7 @@ def sum_square(sum_square_x):
 
 	return total
 
+# samples data every 
 def distanceSensor():
 
 	pub = rospy.Publisher('distance_risk',Float64, queue_size = 1)
@@ -172,6 +176,7 @@ def distanceSensor():
 
 			pub.publish(distance_risk)
 			rospy.sleep(1.0)
+
 
 			del list_d[:]
 			#print "list is empty", list_d

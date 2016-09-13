@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import rospy
 
+# intial testing node.
+
 from std_msgs.msg import Float64
 
 def risk_test():

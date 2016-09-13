@@ -1,8 +1,10 @@
 #!/usr/bin/env python
+
+# ROS node which subsribes to simulated sensors and does a final calculation
+
 import rospy
 import math
 import geometry_msgs.msg
-
 from std_msgs.msg import Float64
 
 sound_risk = 0.0
@@ -10,6 +12,7 @@ distance_risk = 0.0
 battery_life = 0.0
 speed_risk = 0.0
 
+# maximum values from the sensors to calculate a percentage
 max_sound = 8.0
 max_distance = 14.0
 max_speed = 4.0
@@ -51,6 +54,7 @@ def riskController():
 
 	total_risk = 0.0
 	rate = rospy.Rate(5.0)
+	
 	while not rospy.is_shutdown():
 
 		percentage_sound = get_percentage(sound_risk, max_sound)
@@ -64,22 +68,21 @@ def riskController():
 		#percentage_speed = get_percentage(0.3, max_speed)
 		#percentage_battery = get_percentage(0.0, max_battery)
 
-		#print round(sound_risk), round(distance_risk), battery_life, speed_risk
 
+		# weightings of different asigned to d
 		sound_weighting = 0.25
 		distance_weighting = 0.25
 		battery_weighting = 0.25
 		speed_weighting = 0.25
 
-		
+		# final risk scoring from all the subscirbed simulated sensor values and weightings applied
 		total_risk = (percentage_sound * sound_weighting) + (percentage_distance * distance_weighting) + (percentage_battery * battery_weighting) + (percentage_speed * sound_weighting)
 
 		#convert total risk into a overall percentage
 		total_risk = total_risk * 100
 
-		print round(percentage_sound, 2), round(percentage_distance, 2), round(percentage_battery, 2), round(percentage_speed, 2), round(total_risk, 2), round(speed_risk, 2)
+		#print round(percentage_sound, 2), round(percentage_distance, 2), round(percentage_battery, 2), round(percentage_speed, 2), round(total_risk, 2), round(speed_risk, 2)
 
-		#print round(percentage_speed, 1)
 		pub.publish(total_risk)
 
 if __name__ == '__main__':

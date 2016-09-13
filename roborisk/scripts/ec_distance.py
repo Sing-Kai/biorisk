@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+
+# ROS node to produce the environmental cue of distance between robot and drone
+
 import rospy
 import math
 import geometry_msgs.msg

@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+
+# ROS node which attempted to change the velocity by move_base navigation stack
+
 import rospy
 import math
 import numpy

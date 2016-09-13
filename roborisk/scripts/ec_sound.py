@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+
+# python node to simulate the distance between the sound of drone
+
 from __future__ import division
 import rospy
 import math
@@ -8,7 +11,7 @@ import numpy
 from std_msgs.msg import Float64
 
 
-relative_distance = 0.1
+relative_distance = 1.0
 decibel = 60.0
 source = 0.1
 sound_pressure = 0.0
@@ -22,7 +25,6 @@ def get_distance(data):
 def get_ratio(r_dist):
 
 	ratio = 0.0
-
 	ratio = 1.0/(r_dist)
 
 	return ratio
@@ -39,6 +41,8 @@ def soundSimulator():
 	while not rospy.is_shutdown():
 
 		r_distance = round(relative_distance, 1)
+
+		print r_distance
 
 		ratio = 1/r_distance
 

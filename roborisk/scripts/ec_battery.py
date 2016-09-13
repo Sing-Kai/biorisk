@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+
+# Ros node to simulate battery life of robot
+
 import rospy
 import math
 import time

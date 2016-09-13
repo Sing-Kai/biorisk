@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
-
-# Node to generate random coordinates and also reset position of the drone and robot
+# ROS node which produced the random seeds for hiding location
 
 import rospy
 import random
@@ -31,9 +30,9 @@ robot_goal_distance = 0.0
 drone_goal_distance = 0.0
 goal_hide_distance = 0.0
 
-# coordinates to rest location
+# test below list
 # set 1
-#random.seed(41) #  robot: -2.4 -5.4  drone: -6.7 8.3  goal: 1.6 3.8  robot to goal: 10.0  robot to drone: 14.0 drone to goal: 9.0
+random.seed(41) #  robot: -2.4 -5.4  drone: -6.7 8.3  goal: 1.6 3.8  robot to goal: 10.0  robot to drone: 14.0 drone to goal: 9.0
 
 # set 2
 #random.seed(72) #  robot: -8.5 1.9  drone: 9.8 -3.1  goal: 0.9 -2.5  robot to goal: 10.0  robot to drone: 19.0 drone to goal: 9.0
@@ -120,22 +119,22 @@ def distanceCheck():
 
 	global robot_drone_distance, robot_goal_distance, drone_goal_distance, goal_hide_distance
 
-	dx = drone_x - robot_x
-	dy = drone_y - robot_y
+#	dx = drone_x - robot_x
+#	dy = drone_y - robot_y#
 
-	gx = goal_x - robot_x
-	gy = goal_y - robot_y
+#	gx = goal_x - robot_x
+#	gy = goal_y - robot_y#
 
-	dgx = goal_x - drone_x
-	dgy = goal_y - drone_y
+#	dgx = goal_x - drone_x
+#	dgy = goal_y - drone_y
 
-#	dhx = goal_x - hide_goal_x
-#	dhy = goal_y - hide_goal_y
+	dhx = goal_x - hide_goal_x
+	dhy = goal_y - hide_goal_y
 
-	robot_drone_distance = math.sqrt(dx ** 2 + dy ** 2)
-	robot_goal_distance = math.sqrt(gx ** 2 + gy ** 2)
-	drone_goal_distance = math.sqrt(dgx ** 2 + dgy ** 2)
-#	goal_hide_distance = math.sqrt(dhx ** 2 + dhy ** 2)
+#	robot_drone_distance = math.sqrt(dx ** 2 + dy ** 2)
+#	robot_goal_distance = math.sqrt(gx ** 2 + gy ** 2)
+#	drone_goal_distance = math.sqrt(dgx ** 2 + dgy ** 2)
+	goal_hide_distance = math.sqrt(dhx ** 2 + dhy ** 2)
 
 	#print "drone to robot", round(robot_drone_distance)
 	#print "robot to goal", round(robot_goal_distance)
@@ -149,15 +148,18 @@ def generateList():
 		random.seed(i)		
 		create_random()
 		distanceCheck()		
-
-		if (9.0 <= robot_goal_distance <= 12.0) and (7.0 <= drone_goal_distance <= 11.0) and (8.0 <= robot_drone_distance):
+		"""
+		if (6.0 <= goal_hide_distance <= 11.0):
 			#print " "
-			#print "Keep random seed: ", i
+			print "Keep random seed: ", i
 			#print robot_x, robot_y, drone_x, drone_y, goal_x, goal_y
 			#print "distance value", robot_goal_distance, robot_drone_distance
-			print "#random.seed(", i, ")", "# ", "robot:", robot_x, robot_y, " drone:", drone_x, drone_y, " goal:", goal_x, goal_y, " robot to goal:", round(robot_goal_distance), " robot to drone:", round(robot_drone_distance), "drone to goal:", round(drone_goal_distance)
+			#print "#random.seed(", i, ")", "# ", "robot:", robot_x, robot_y, " drone:", drone_x, drone_y, " goal:", goal_x, goal_y, " robot to goal:", round(robot_goal_distance), " robot to drone:", round(robot_drone_distance), "drone to goal:", round(drone_goal_distance)
+			print "random hide goal is:", hide_goal_x, hide_goal_y, goal_hide_distance
 			randomSeedList.append(i)
+		"""
 
+		print i, "hide_goal_x, hide_goal_y = ", round(hide_goal_x, 1), ",", round(hide_goal_y, 1)
 	#print randomSeedList		
 
 # select random seeds that fulfill critera
@@ -174,10 +176,10 @@ def selectRandomSeed():
 if __name__ == '__main__':
 	
 	try:
-		create_random()
-		#generateList()
+		#create_random()
+		generateList()
 		#selectRandomSeed()
-		reset_robot()
+		#reset_robot()
 	except rospy.ROSInterruptException:
 		pass
 

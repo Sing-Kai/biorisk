@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+### python scripted used to analysis print out of a file containing raw data
+
 import rospy
 import inspect
 import sys
@@ -7,6 +9,7 @@ import os
 import re
 import math
 
+# file name with raw data
 model_file = 'tempdata'
 
 listtoplot = []
@@ -39,6 +42,7 @@ def convert(tempNumList):
 			
 	return finalResult
 
+# analysis data and adds it to a list for further analysis
 def findData():
 
 	finaSimTime = []
@@ -104,18 +108,18 @@ def findData():
 			result_time_up += 1	
 
 
-	print "Final sim time =", convert(finaSimTime)
-	print "Proximity List =", convert(proximityList)
-	print "Proximity count =", proximity_count
-	print "Proximity distance =", convert(proximity_distanceList)
+	print "Final_sim_time =", convert(finaSimTime)
+	print "Proximity_List =", convert(proximityList)
+	print "Proximity_count =", proximity_count
+	print "Proximity_distance =", convert(proximity_distanceList)
 	print "ProteanList =", convert(proteanList)
 	print "protean_count =", protean_count
-	print "Protean distance =", convert(protean_distanceList)
-	print "Total reached goal =", result_goal
-	print "Total captured_fleeing =", result_captured_fleeing
-	print "Total captured_goal =", result_captured_goal
-	print "Total reach goal fleeing =", result_reached_goal_fled
-	print "Total reach max_time =", result_time_up
+	print "Protean_distance =", convert(protean_distanceList)
+	print "Total_reached_goal =", result_goal
+	print "Total_captured_fleeing =", result_captured_fleeing
+	print "Total_captured_goal =", result_captured_goal
+	print "Total_reach_goal_fleeing =", result_reached_goal_fled
+	print "Total_reach_max_time =", result_time_up
 
 	#print "final sim time", convert(finaSimTime)	
 

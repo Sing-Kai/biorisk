@@ -1,4 +1,9 @@
 #!/usr/bin/env python
+
+# modified code from http://wiki.ros.org/teleop_twist_keyboard, allows for user to manually control drone in Gazebo world
+# used for testing initially
+
+
 import roslib; roslib.load_manifest('teleop_twist_keyboard')
 import rospy
 
@@ -25,37 +30,12 @@ b : down (-z)
 
 anything else : stop
 
-q/z : increase/decrease max speeds by 10%
-w/x : increase/decrease only linear speed by 10%
-e/c : increase/decrease only angular speed by 10%
+
 
 CTRL-C to quit
 """
 
 # original code 
-
-"""
-moveBindings = {
-		'i':(1,0,0,0),
-		'o':(1,0,0,-1),
-		'j':(0,0,0,1),
-		'l':(0,0,0,-1),
-		'u':(1,0,0,1),
-		',':(-1,0,0,0),
-		'.':(-1,0,0,1),
-		'm':(-1,0,0,-1),
-		'O':(1,-1,0,0),
-		'I':(1,0,0,0),
-		'J':(0,1,0,0),
-		'L':(0,-1,0,0),
-		'U':(1,1,0,0),
-		'<':(-1,0,0,0),
-		'>':(-1,-1,0,0),
-		'M':(-1,1,0,0),
-		't':(0,0,1,0),
-		'b':(0,0,-1,0),
-	       }
-"""
 
 moveBindings = {
 		'i':(1,0,0,0),
